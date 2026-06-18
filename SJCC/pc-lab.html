@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,21 +9,21 @@
 :root{
   --gold:#ffc72c;
   --purple:#2e1a47;
-  --bg:#120b1d;
-  --card:#241832;
-  --text:#ffffff;
-  --muted:#d8cfe6;
-  --border:#4a3564;
-  --success:#3ddc97;
-  --danger:#ff6b6b;
-}
-
-[data-theme="light"]{
   --bg:#f7f4fb;
   --card:#ffffff;
   --text:#231f20;
   --muted:#5f5868;
   --border:#ded6ea;
+  --success:#1f9d63;
+  --danger:#d64545;
+}
+
+[data-theme="dark"]{
+  --bg:#120b1d;
+  --card:#241832;
+  --text:#ffffff;
+  --muted:#d8cfe6;
+  --border:#4a3564;
 }
 
 *{box-sizing:border-box;}
@@ -39,6 +39,7 @@ header{
   background:linear-gradient(135deg,#2e1a47,#17111f);
   border-bottom:6px solid var(--gold);
   padding:24px 7%;
+  color:white;
 }
 
 nav{
@@ -73,6 +74,7 @@ nav a{
 .hero h1{
   font-size:clamp(2.2rem,5vw,4.5rem);
   margin:0 0 20px;
+  color:white;
 }
 
 .hero span{color:var(--gold);}
@@ -84,9 +86,7 @@ nav a{
   max-width:850px;
 }
 
-main{
-  padding:45px 7%;
-}
+main{padding:45px 7%;}
 
 .card{
   background:var(--card);
@@ -106,56 +106,128 @@ main{
   border:1px solid var(--border);
   border-radius:16px;
   padding:18px;
-  background:rgba(255,255,255,0.04);
+  background:rgba(127,127,127,0.05);
+}
+
+.component img{
+  width:100%;
+  max-height:110px;
+  object-fit:contain;
+  margin-bottom:10px;
 }
 
 .component h3{
-  color:var(--gold);
+  color:var(--purple);
   margin-top:0;
+}
+
+[data-theme="dark"] .component h3{
+  color:var(--gold);
 }
 
 .lab-layout{
   display:grid;
-  grid-template-columns:1fr 1.5fr;
+  grid-template-columns:280px 1fr;
   gap:24px;
 }
 
-.parts-list,
-.pc-case{
+.parts-list{
   min-height:420px;
 }
 
 .part{
-  background:var(--gold);
-  color:#231f20;
+  background:var(--card);
+  color:var(--text);
+  border:2px solid var(--border);
   padding:12px;
-  border-radius:12px;
+  border-radius:14px;
   margin-bottom:12px;
   cursor:grab;
   font-weight:800;
-  text-align:center;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.part:hover{
+  transform:scale(1.04);
+  border-color:var(--gold);
+  box-shadow:0 8px 20px rgba(0,0,0,.18);
+}
+
+.part:active{
+  cursor:grabbing;
+  transform:scale(1.08);
+}
+
+.part.dragging{
+  opacity:.55;
+  transform:scale(1.08);
+  border-color:var(--gold);
+}
+
+.part img{
+  width:48px;
+  height:48px;
+  object-fit:contain;
+  background:#fff;
+  border-radius:10px;
+  padding:4px;
+}
+
+.pc-board{
+  background:linear-gradient(135deg,#204b3a,#10271f);
+  border:8px solid #1b1b1b;
+  border-radius:24px;
+  padding:22px;
+  min-height:720px;
+  position:relative;
+  box-shadow:inset 0 0 40px rgba(0,0,0,.4);
+}
+
+.board-title{
+  color:white;
+  margin-top:0;
+}
+
+.board-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(180px,1fr));
+  gap:16px;
 }
 
 .drop-zone{
-  border:2px dashed var(--border);
-  border-radius:14px;
-  min-height:58px;
+  border:3px dashed rgba(255,255,255,.45);
+  background:rgba(255,255,255,.08);
+  color:white;
+  border-radius:16px;
+  min-height:110px;
   padding:12px;
-  margin-bottom:12px;
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
 }
 
 .drop-zone strong{
+  display:block;
   color:var(--gold);
+  margin-bottom:8px;
+}
+
+.drop-zone.drag-over{
+  transform:scale(1.05);
+  border-color:var(--gold);
+  background:rgba(255,199,44,.22);
+  box-shadow:0 0 0 4px rgba(255,199,44,.18);
 }
 
 .drop-zone.correct{
   border-color:var(--success);
-  background:rgba(61,220,151,0.12);
+  background:rgba(31,157,99,.25);
 }
 
 .drop-zone.incorrect{
   border-color:var(--danger);
-  background:rgba(255,107,107,0.12);
+  background:rgba(214,69,69,.25);
 }
 
 button{
@@ -182,10 +254,9 @@ footer{
   color:white;
 }
 
-@media(max-width:800px){
-  .lab-layout{
-    grid-template-columns:1fr;
-  }
+@media(max-width:900px){
+  .lab-layout{grid-template-columns:1fr;}
+  .board-grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -195,15 +266,14 @@ footer{
 <header>
 <nav>
   <a href="index.html">← Back to Course Hub</a>
-  <button class="theme-btn" onclick="toggleTheme()">Light Mode</button>
+  <button class="theme-btn" onclick="toggleTheme()">Dark Mode</button>
 </nav>
 
 <section class="hero">
   <h1>PC Building <span>Simulator Lab</span></h1>
   <p>
-    In this lab, you will learn the major components inside a desktop computer,
-    review what each part does, and complete a drag-and-drop PC assembly activity.
-    This lab supports hardware skills commonly introduced in IT support and CompTIA A+ preparation.
+    Learn the major components inside a desktop computer, review what each part does,
+    and complete a drag-and-drop PC assembly activity with automatic grading.
   </p>
 </section>
 </header>
@@ -213,91 +283,41 @@ footer{
 <section class="card">
   <h2>Learning Objectives</h2>
   <ul>
-    <li>Identify the main hardware components inside a desktop computer.</li>
-    <li>Explain the purpose of the motherboard, CPU, RAM, storage, GPU, PSU, cooling, and case.</li>
-    <li>Practice placing components into the correct part of a PC build.</li>
-    <li>Use feedback to improve hardware troubleshooting and assembly knowledge.</li>
+    <li>Identify major desktop computer hardware components.</li>
+    <li>Explain what each component does.</li>
+    <li>Place each component into the correct area of a PC build.</li>
+    <li>Use grading feedback to improve hardware knowledge.</li>
   </ul>
 </section>
 
 <section class="card">
   <h2>Component Guide</h2>
-
-  <div class="grid">
-    <div class="component">
-      <h3>Motherboard</h3>
-      <p>The main circuit board that connects the CPU, RAM, storage, power, expansion cards, and ports.</p>
-    </div>
-
-    <div class="component">
-      <h3>CPU</h3>
-      <p>The processor acts as the brain of the computer. It performs instructions and calculations.</p>
-    </div>
-
-    <div class="component">
-      <h3>RAM</h3>
-      <p>Temporary memory used while programs are running. More RAM helps with multitasking.</p>
-    </div>
-
-    <div class="component">
-      <h3>Storage</h3>
-      <p>HDDs and SSDs store the operating system, applications, and user files.</p>
-    </div>
-
-    <div class="component">
-      <h3>Power Supply</h3>
-      <p>The PSU converts wall power into usable power for the computer components.</p>
-    </div>
-
-    <div class="component">
-      <h3>Graphics Card</h3>
-      <p>The GPU processes graphics and video output. It is especially important for gaming and design work.</p>
-    </div>
-
-    <div class="component">
-      <h3>Cooling Fan</h3>
-      <p>Cooling helps remove heat from the CPU, GPU, and case to prevent overheating.</p>
-    </div>
-
-    <div class="component">
-      <h3>Case</h3>
-      <p>The case physically holds and protects the internal computer components.</p>
-    </div>
-  </div>
+  <div class="grid" id="componentGuide"></div>
 </section>
 
 <section class="card">
   <h2>Drag-and-Drop PC Assembly</h2>
-  <p>Drag each component into the correct location. Then click <strong>Grade My Build</strong>.</p>
+  <p>Drag each part onto the motherboard/case diagram. You can drag parts back to the component list or move them between slots.</p>
 
   <div class="lab-layout">
-
-    <div class="parts-list card">
+    <div class="card parts-list drop-bin" id="partsList">
       <h3>Components</h3>
-
-      <div class="part" draggable="true" id="cpu">CPU</div>
-      <div class="part" draggable="true" id="ram">RAM</div>
-      <div class="part" draggable="true" id="storage">Storage</div>
-      <div class="part" draggable="true" id="psu">Power Supply</div>
-      <div class="part" draggable="true" id="motherboard">Motherboard</div>
-      <div class="part" draggable="true" id="gpu">Graphics Card</div>
-      <div class="part" draggable="true" id="fan">Cooling Fan</div>
-      <div class="part" draggable="true" id="case">Case</div>
     </div>
 
-    <div class="pc-case card">
-      <h3>PC Build Area</h3>
+    <div class="pc-board">
+      <h3 class="board-title">Motherboard / PC Build Area</h3>
 
-      <div class="drop-zone" data-answer="case"><strong>Computer Case Area</strong></div>
-      <div class="drop-zone" data-answer="motherboard"><strong>Motherboard Tray</strong></div>
-      <div class="drop-zone" data-answer="cpu"><strong>CPU Socket</strong></div>
-      <div class="drop-zone" data-answer="ram"><strong>RAM Slots</strong></div>
-      <div class="drop-zone" data-answer="storage"><strong>Drive Bay / M.2 Slot</strong></div>
-      <div class="drop-zone" data-answer="psu"><strong>Power Supply Bay</strong></div>
-      <div class="drop-zone" data-answer="gpu"><strong>PCIe Expansion Slot</strong></div>
-      <div class="drop-zone" data-answer="fan"><strong>Cooling / Airflow Area</strong></div>
+      <div class="board-grid">
+        <div class="drop-zone" data-answer="case"><strong>Computer Case Area</strong></div>
+        <div class="drop-zone" data-answer="motherboard"><strong>Motherboard Tray</strong></div>
+        <div class="drop-zone" data-answer="cpu"><strong>CPU Socket</strong></div>
+        <div class="drop-zone" data-answer="ram"><strong>RAM Slots</strong></div>
+        <div class="drop-zone" data-answer="storage"><strong>Drive Bay / M.2 Slot</strong></div>
+        <div class="drop-zone" data-answer="psu"><strong>Power Supply Bay</strong></div>
+        <div class="drop-zone" data-answer="gpu"><strong>PCIe Expansion Slot</strong></div>
+        <div class="drop-zone" data-answer="fan"><strong>Cooling / Airflow Area</strong></div>
+      </div>
     </div>
-
   </div>
 
   <button onclick="gradeBuild()">Grade My Build</button>
@@ -309,10 +329,10 @@ footer{
 <section class="card">
   <h2>Reflection Questions</h2>
   <ol>
-    <li>Which component do you think is most important for overall computer performance? Why?</li>
-    <li>What could happen if a computer has poor cooling?</li>
-    <li>Why does the motherboard need to be compatible with the CPU and RAM?</li>
-    <li>How would you explain the difference between RAM and storage to a beginner?</li>
+    <li>What is the difference between RAM and storage?</li>
+    <li>Why does the motherboard need to be compatible with the CPU?</li>
+    <li>What can happen if the cooling system fails?</li>
+    <li>Why is documentation important when troubleshooting a PC?</li>
   </ol>
 </section>
 
@@ -323,40 +343,131 @@ Professor Bao Course Content • PC Building Simulator Lab
 </footer>
 
 <script>
-const parts = document.querySelectorAll(".part");
-const zones = document.querySelectorAll(".drop-zone");
+const components = [
+  {
+    id:"case",
+    name:"Case",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Computer_case.svg/512px-Computer_case.svg.png",
+    desc:"The physical enclosure that holds and protects the computer components."
+  },
+  {
+    id:"motherboard",
+    name:"Motherboard",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Computer-motherboard.svg/512px-Computer-motherboard.svg.png",
+    desc:"The main circuit board that connects the CPU, RAM, storage, power, and expansion cards."
+  },
+  {
+    id:"cpu",
+    name:"CPU",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/CPU.svg/512px-CPU.svg.png",
+    desc:"The processor, often called the brain of the computer, executes instructions."
+  },
+  {
+    id:"ram",
+    name:"RAM",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/RAM_n.svg/512px-RAM_n.svg.png",
+    desc:"Temporary memory used while programs are running."
+  },
+  {
+    id:"storage",
+    name:"Storage",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Hard_drive-en.svg/512px-Hard_drive-en.svg.png",
+    desc:"Stores the operating system, applications, and user files."
+  },
+  {
+    id:"psu",
+    name:"Power Supply",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/PSU_icon.svg/512px-PSU_icon.svg.png",
+    desc:"Converts wall power into usable power for internal computer parts."
+  },
+  {
+    id:"gpu",
+    name:"Graphics Card",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Video_card.svg/512px-Video_card.svg.png",
+    desc:"Processes graphics and video output."
+  },
+  {
+    id:"fan",
+    name:"Cooling Fan",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Fan.svg/512px-Fan.svg.png",
+    desc:"Moves air through the system to help prevent overheating."
+  }
+];
 
-parts.forEach(part => {
-  part.addEventListener("dragstart", event => {
-    event.dataTransfer.setData("text/plain", event.target.id);
+const partsList = document.getElementById("partsList");
+const guide = document.getElementById("componentGuide");
+
+components.forEach(item => {
+  const guideCard = document.createElement("div");
+  guideCard.className = "component";
+  guideCard.innerHTML = `
+    <img src="${item.img}" alt="${item.name}">
+    <h3>${item.name}</h3>
+    <p>${item.desc}</p>
+  `;
+  guide.appendChild(guideCard);
+
+  const part = document.createElement("div");
+  part.className = "part";
+  part.draggable = true;
+  part.id = item.id;
+  part.innerHTML = `<img src="${item.img}" alt="${item.name}"><span>${item.name}</span>`;
+  partsList.appendChild(part);
+});
+
+let dragged = null;
+
+document.addEventListener("dragstart", e => {
+  if(e.target.classList.contains("part")){
+    dragged = e.target;
+    e.target.classList.add("dragging");
+    e.dataTransfer.setData("text/plain", e.target.id);
+  }
+});
+
+document.addEventListener("dragend", e => {
+  if(e.target.classList.contains("part")){
+    e.target.classList.remove("dragging");
+  }
+  document.querySelectorAll(".drop-zone, .drop-bin").forEach(zone => {
+    zone.classList.remove("drag-over");
   });
 });
 
-zones.forEach(zone => {
-  zone.addEventListener("dragover", event => {
-    event.preventDefault();
+document.querySelectorAll(".drop-zone, .drop-bin").forEach(zone => {
+  zone.addEventListener("dragover", e => {
+    e.preventDefault();
+    zone.classList.add("drag-over");
   });
 
-  zone.addEventListener("drop", event => {
-    event.preventDefault();
-    const partId = event.dataTransfer.getData("text/plain");
-    const part = document.getElementById(partId);
+  zone.addEventListener("dragleave", () => {
+    zone.classList.remove("drag-over");
+  });
 
-    if(zone.querySelector(".part")){
-      document.querySelector(".parts-list").appendChild(zone.querySelector(".part"));
+  zone.addEventListener("drop", e => {
+    e.preventDefault();
+    zone.classList.remove("drag-over");
+
+    if(!dragged) return;
+
+    if(zone.classList.contains("drop-zone")){
+      const existingPart = zone.querySelector(".part");
+      if(existingPart && existingPart !== dragged){
+        partsList.appendChild(existingPart);
+      }
     }
 
-    zone.appendChild(part);
+    zone.appendChild(dragged);
   });
 });
 
 function gradeBuild(){
   let score = 0;
+  const zones = document.querySelectorAll(".drop-zone");
   const total = zones.length;
 
   zones.forEach(zone => {
     zone.classList.remove("correct", "incorrect");
-
     const placedPart = zone.querySelector(".part");
 
     if(placedPart && placedPart.id === zone.dataset.answer){
@@ -371,23 +482,21 @@ function gradeBuild(){
   const feedback = document.getElementById("feedback");
 
   if(score === total){
-    feedback.innerHTML = "Score: " + score + "/" + total + " (" + percent + "%) — Excellent work! Your PC build is correct.";
+    feedback.innerHTML = `Score: ${score}/${total} (${percent}%) — Excellent work! Your PC build is correct.`;
   }else if(score >= 5){
-    feedback.innerHTML = "Score: " + score + "/" + total + " (" + percent + "%) — Good progress. Review the highlighted areas and try again.";
+    feedback.innerHTML = `Score: ${score}/${total} (${percent}%) — Good progress. Review the highlighted areas and try again.`;
   }else{
-    feedback.innerHTML = "Score: " + score + "/" + total + " (" + percent + "%) — Keep practicing. Review the component guide before trying again.";
+    feedback.innerHTML = `Score: ${score}/${total} (${percent}%) — Keep practicing. Review the component guide before trying again.`;
   }
 }
 
 function resetLab(){
-  const list = document.querySelector(".parts-list");
-
-  parts.forEach(part => {
-    list.appendChild(part);
+  document.querySelectorAll(".part").forEach(part => {
+    partsList.appendChild(part);
   });
 
-  zones.forEach(zone => {
-    zone.classList.remove("correct", "incorrect");
+  document.querySelectorAll(".drop-zone").forEach(zone => {
+    zone.classList.remove("correct", "incorrect", "drag-over");
   });
 
   document.getElementById("feedback").innerHTML = "";
@@ -397,12 +506,12 @@ function toggleTheme(){
   const html = document.documentElement;
   const btn = document.querySelector(".theme-btn");
 
-  if(html.getAttribute("data-theme") === "dark"){
-    html.setAttribute("data-theme","light");
-    btn.textContent = "Dark Mode";
-  }else{
+  if(html.getAttribute("data-theme") === "light"){
     html.setAttribute("data-theme","dark");
     btn.textContent = "Light Mode";
+  }else{
+    html.setAttribute("data-theme","light");
+    btn.textContent = "Dark Mode";
   }
 }
 </script>
