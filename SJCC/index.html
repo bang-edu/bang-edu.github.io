@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SJCC Learning Hub</title>
+
+  <style>
+    :root {
+      --gold: #ffc72c;
+      --purple: #2e1a47;
+      --dark: #17111f;
+      --card: #241832;
+      --text: #ffffff;
+      --muted: #d8cfe6;
+      --border: #4a3564;
+      --bg: #120b1d;
+    }
+
+    [data-theme="light"] {
+      --bg: #f7f4fb;
+      --card: #ffffff;
+      --text: #231f20;
+      --muted: #5f5868;
+      --border: #ded6ea;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--purple), #17111f);
+      border-bottom: 6px solid var(--gold);
+      padding: 24px 7%;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: white;
+    }
+
+    .theme-btn {
+      border: 2px solid var(--gold);
+      background: transparent;
+      color: white;
+      padding: 9px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .hero {
+      max-width: 1000px;
+      padding: 70px 0;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4.8rem);
+      line-height: 1.05;
+      margin: 0 0 18px;
+      color: white;
+    }
+
+    .hero span {
+      color: var(--gold);
+    }
+
+    .hero p {
+      max-width: 720px;
+      font-size: 1.15rem;
+      color: #f2eafc;
+    }
+
+    main {
+      padding: 48px 7%;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .section-subtitle {
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    .course-block {
+      margin-bottom: 50px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 28px;
+    }
+
+    .course-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+
+    .badge {
+      background: var(--gold);
+      color: #231f20;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.85rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+    }
+
+    .module {
+      display: block;
+      text-decoration: none;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .module:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold);
+    }
+
+    .module small {
+      display: block;
+      color: var(--gold);
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .module h3 {
+      margin: 0 0 8px;
+      font-size: 1.05rem;
+    }
+
+    .module p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    footer {
+      padding: 28px 7%;
+      text-align: center;
+      background: var(--purple);
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <div class="brand">San José City College Learning Hub</div>
+      <button class="theme-btn" onclick="toggleTheme()">Light Mode</button>
+    </nav>
+
+    <section class="hero">
+      <h1>SJCC <span>Technology</span> Course Portal</h1>
+      <p>
+        Organized course pages for Google IT Support and Introduction to CIS.
+        Select a module or unit below to view notes, labs, study guides, and activities.
+      </p>
+    </section>
+  </header>
+
+  <main>
+    <h2 class="section-title">Course Sections</h2>
+    <p class="section-subtitle">Each button links to a separate page inside the SJCC folder.</p>
+
+    <section class="course-block">
+      <div class="course-header">
+        <div>
+          <h2>Google IT Support</h2>
+          <p class="section-subtitle">Modules 1–6</p>
+        </div>
+        <span class="badge">IT Certificate Pathway</span>
+      </div>
+
+      <div class="grid">
+        <a class="module" href="it-module-1.html">
+          <small>Module 1</small>
+          <h3>Technical Support Fundamentals</h3>
+          <p>Hardware, software, troubleshooting, and support basics.</p>
+        </a>
+
+        <a class="module" href="it-module-2.html">
+          <small>Module 2</small>
+          <h3>Computer Networking</h3>
+          <p>Networks, IP addresses, DNS, routing, and connectivity.</p>
+        </a>
+
+        <a class="module" href="it-module-3.html">
+          <small>Module 3</small>
+          <h3>Operating Systems</h3>
+          <p>Windows, Linux, files, users, permissions, and tools.</p>
+        </a>
+
+        <a class="module" href="it-module-4.html">
+          <small>Module 4</small>
+          <h3>System Administration</h3>
+          <p>Infrastructure, services, directory systems, and admin tasks.</p>
+        </a>
+
+        <a class="module" href="it-module-5.html">
+          <small>Module 5</small>
+          <h3>IT Security</h3>
+          <p>Security basics, threats, authentication, and safe systems.</p>
+        </a>
+
+        <a class="module" href="it-module-6.html">
+          <small>Module 6</small>
+          <h3>Capstone & Career Prep</h3>
+          <p>Review, projects, resumes, interviews, and job readiness.</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="course-block">
+      <div class="course-header">
+        <div>
+          <h2>Introduction to CIS</h2>
+          <p class="section-subtitle">Units 1–21</p>
+        </div>
+        <span class="badge">Computer Information Systems</span>
+      </div>
+
+      <div class="grid">
+        <a class="module" href="cis-unit-1.html"><small>Unit 1</small><h3>Intro to Information Systems</h3><p>Computers, data, systems, and careers.</p></a>
+        <a class="module" href="cis-unit-2.html"><small>Unit 2</small><h3>Computer Hardware</h3><p>Devices, components, and performance.</p></a>
+        <a class="module" href="cis-unit-3.html"><small>Unit 3</small><h3>Software Basics</h3><p>Applications, system software, and licensing.</p></a>
+        <a class="module" href="cis-unit-4.html"><small>Unit 4</small><h3>Operating Systems</h3><p>Desktop, mobile, and cloud operating systems.</p></a>
+        <a class="module" href="cis-unit-5.html"><small>Unit 5</small><h3>Productivity Tools</h3><p>Documents, spreadsheets, slides, and collaboration.</p></a>
+
+        <a class="module" href="cis-unit-6.html"><small>Unit 6</small><h3>Networking Basics</h3><p>LANs, WANs, Wi-Fi, and internet connections.</p></a>
+        <a class="module" href="cis-unit-7.html"><small>Unit 7</small><h3>Internet Technologies</h3><p>Websites, browsers, search, and web services.</p></a>
+        <a class="module" href="cis-unit-8.html"><small>Unit 8</small><h3>Cloud Computing</h3><p>Cloud storage, SaaS, platforms, and services.</p></a>
+        <a class="module" href="cis-unit-9.html"><small>Unit 9</small><h3>Digital Communication</h3><p>Email, messaging, meetings, and collaboration.</p></a>
+        <a class="module" href="cis-unit-10.html"><small>Unit 10</small><h3>Mobile Technology</h3><p>Smartphones, apps, tablets, and mobile security.</p></a>
+
+        <a class="module" href="cis-unit-11.html"><small>Unit 11</small><h3>Databases</h3><p>Tables, records, queries, and information storage.</p></a>
+        <a class="module" href="cis-unit-12.html"><small>Unit 12</small><h3>Information Management</h3><p>Organizing, protecting, and using information.</p></a>
+        <a class="module" href="cis-unit-13.html"><small>Unit 13</small><h3>Enterprise Systems</h3><p>Business systems, ERP, CRM, and workflows.</p></a>
+        <a class="module" href="cis-unit-14.html"><small>Unit 14</small><h3>E-Commerce</h3><p>Online business, payments, and digital markets.</p></a>
+        <a class="module" href="cis-unit-15.html"><small>Unit 15</small><h3>Data Analytics</h3><p>Data, dashboards, reports, and decision-making.</p></a>
+
+        <a class="module" href="cis-unit-16.html"><small>Unit 16</small><h3>Cybersecurity</h3><p>Threats, malware, passwords, and protection.</p></a>
+        <a class="module" href="cis-unit-17.html"><small>Unit 17</small><h3>Privacy & Ethics</h3><p>Digital responsibility, privacy, and ethical use.</p></a>
+        <a class="module" href="cis-unit-18.html"><small>Unit 18</small><h3>Artificial Intelligence</h3><p>AI tools, automation, prompts, and limitations.</p></a>
+        <a class="module" href="cis-unit-19.html"><small>Unit 19</small><h3>Emerging Technologies</h3><p>AR, VR, IoT, robotics, and future tech.</p></a>
+        <a class="module" href="cis-unit-20.html"><small>Unit 20</small><h3>Technology Careers</h3><p>IT roles, skills, certifications, and pathways.</p></a>
+        <a class="module" href="cis-unit-21.html"><small>Unit 21</small><h3>Final Review</h3><p>Course wrap-up, review, and final preparation.</p></a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    San José City College Learning Hub • Go Jaguars
+  </footer>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const button = document.querySelector(".theme-btn");
+
+      if (html.getAttribute("data-theme") === "dark") {
+        html.setAttribute("data-theme", "light");
+        button.textContent = "Dark Mode";
+      } else {
+        html.setAttribute("data-theme", "dark");
+        button.textContent = "Light Mode";
+      }
+    }
+  </script>
+</body>
+</html>
