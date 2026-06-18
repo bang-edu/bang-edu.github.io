@@ -166,9 +166,10 @@ footer{
 <section class="hero">
   <h1>Professor Bao's <span>Course Content</span></h1>
   <p>
-    Welcome to Professor Bao's course resource hub. This site contains lecture notes,
-    study guides, assignments, lab resources, AI-assisted learning materials, and
-    supplemental content for current courses.
+    Welcome to Professor Bao's course resource hub. This site provides
+    lecture materials, hands-on lab activities, study guides, assignments,
+    AI-assisted learning resources, and supplemental content for students
+    enrolled in Introduction to Computer Information Systems and Google IT Support.
   </p>
 </section>
 </header>
@@ -179,7 +180,7 @@ footer{
   <h2>About This Site</h2>
   <p>
     This website serves as a centralized location for course materials,
-    supplemental learning resources, and module content created and curated
+    supplemental learning resources, and lab content created and curated
     by Professor Bao.
   </p>
 </section>
@@ -187,47 +188,47 @@ footer{
 <section class="course-block">
 <div class="course-header">
   <div>
-    <h2>Google IT Support</h2>
-    <p>6 Modules • Course Content</p>
+    <h2>Google IT Support Labs</h2>
+    <p>Hands-On Labs & Activities</p>
   </div>
   <span class="badge">Google IT Support</span>
 </div>
 
 <div class="grid">
-<a class="module" href="it-module-1.html">
-<small>Module 1</small>
-<h3>Introduction to IT</h3>
-<p>Information technology basics, computing concepts, career pathways, and IT support roles.</p>
+<a class="module" href="pc-building-simulator-lab.html">
+  <small>Lab 1</small>
+  <h3>PC Building Simulator Lab</h3>
+  <p>
+    Build, configure, and troubleshoot a virtual computer system while
+    learning about processors, memory, storage, motherboards, and peripherals.
+  </p>
 </a>
 
-<a class="module" href="it-module-2.html">
-<small>Module 2</small>
-<h3>Hardware</h3>
-<p>Computer components, peripherals, storage, devices, and hardware fundamentals.</p>
+<a class="module" href="research-your-internet-lab.html">
+  <small>Lab 2</small>
+  <h3>Research Your Internet Lab</h3>
+  <p>
+    Analyze your internet connection, ISP, bandwidth, latency,
+    networking technologies, and home network infrastructure.
+  </p>
 </a>
 
-<a class="module" href="it-module-3.html">
-<small>Module 3</small>
-<h3>Operating Systems</h3>
-<p>Windows, macOS, Linux, files, users, permissions, and OS management.</p>
+<a class="module" href="help-desk-ticket-lab.html">
+  <small>Lab 3</small>
+  <h3>Help Desk Ticket Lab</h3>
+  <p>
+    Practice documenting technical issues, creating support tickets,
+    communicating with users, and tracking incident resolution.
+  </p>
 </a>
 
-<a class="module" href="it-module-4.html">
-<small>Module 4</small>
-<h3>Networking</h3>
-<p>Internet technologies, IP addressing, wireless networking, and connectivity.</p>
-</a>
-
-<a class="module" href="it-module-5.html">
-<small>Module 5</small>
-<h3>Software</h3>
-<p>Applications, installation, productivity tools, cloud services, and software management.</p>
-</a>
-
-<a class="module" href="it-module-6.html">
-<small>Module 6</small>
-<h3>Troubleshooting</h3>
-<p>Problem-solving methods for hardware, software, operating system, and network issues.</p>
+<a class="module" href="it-troubleshooting-lab.html">
+  <small>Lab 4</small>
+  <h3>IT Troubleshooting Lab</h3>
+  <p>
+    Apply systematic troubleshooting techniques to diagnose and resolve
+    common hardware, software, and networking problems.
+  </p>
 </a>
 </div>
 </section>
@@ -276,6 +277,7 @@ Professor Bao Course Content • San José City College
 function toggleTheme(){
   const html=document.documentElement;
   const btn=document.querySelector(".theme-btn");
+
   if(html.getAttribute("data-theme")==="dark"){
     html.setAttribute("data-theme","light");
     btn.textContent="Dark Mode";
