@@ -1,588 +1,2107 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SJCC PC Hardware Simulator Lab</title>
+<title>SJCC PC Hardware Repair Lab</title>
 <style>
 :root{
-  --gold:#ffc72c;
-  --purple:#2e1a47;
-  --bg:#f7f4fb;
-  --card:#ffffff;
-  --text:#231f20;
-  --muted:#5f5868;
-  --border:#ded6ea;
-  --success:#1f9d63;
-  --danger:#d64545;
-}
-[data-theme="dark"]{
-  --bg:#120b1d;
-  --card:#241832;
-  --text:#ffffff;
-  --muted:#d8cfe6;
-  --border:#4a3564;
+  --sjcc-purple:#2e1a47;
+  --sjcc-purple-dark:#12091f;
+  --sjcc-purple-mid:#4c3a86;
+  --sjcc-gold:#ffc72c;
+  --sjcc-white:#ffffff;
+  --grid:#8da7e0;
+  --case:#1b1d1d;
+  --case-border:#0a0a0a;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
-header{background:linear-gradient(135deg,#2e1a47,#17111f);border-bottom:6px solid var(--gold);padding:20px 6%;color:white}
-nav{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
-nav a{color:white;text-decoration:none;font-weight:700}
-button{background:var(--gold);color:#231f20;border:0;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:800}
-.theme-btn{border:2px solid var(--gold);background:transparent;color:white;border-radius:999px}
-.hero{padding:30px 0;max-width:1000px}
-.hero h1{font-size:clamp(2rem,4vw,3.6rem);margin:0 0 14px;color:white}
-.hero span{color:var(--gold)}
-.hero p{color:#f2eafc;line-height:1.6;font-size:1.05rem;max-width:900px}
-main{padding:34px 6%}
-.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;margin-bottom:28px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
-.component{border:1px solid var(--border);border-radius:16px;padding:16px;background:rgba(127,127,127,.05)}
-.component svg{width:100%;height:110px;object-fit:contain;margin-bottom:8px}
-.component h3{margin:4px 0 8px;color:var(--purple)}
-[data-theme="dark"] .component h3{color:var(--gold)}
-.lab-frame{border:1px solid #bfb8c9;background:#d9d7cf;border-radius:12px;overflow:hidden}
-.lab-topbar{background:#393939;color:white;display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:3px solid var(--gold)}
-.brand{font-weight:900;color:var(--gold);font-size:1.25rem}
-.top-actions{display:flex;gap:8px}
-.top-actions button{padding:8px 12px;border-radius:4px;background:#4b4b4b;color:white;border:1px solid #222}
-.sim-grid{display:grid;grid-template-columns:210px 1fr;min-height:790px}
-.scenario{background:#f4f3e8;color:#252525;border-right:1px solid #aaa;padding:12px;overflow:auto}
-.scenario h3{margin:0 0 10px}
-.scenario ul{padding-left:20px;line-height:1.45}
-.sim-main{display:flex;flex-direction:column}
-.shelf{background:#ecebdd;border-top:1px solid #aaa;padding:10px;order:2}
-.shelf-head{display:flex;justify-content:space-between;align-items:center;color:#236274;font-weight:900;margin-bottom:8px}
-.shelf-section{border:1px solid #c5c0ad;background:#f6f4e9;min-height:132px;padding:8px;display:flex;gap:8px;overflow-x:auto;align-items:stretch}
-.part{background:#ffffff;color:#202020;border:2px solid #c9c2b2;border-radius:8px;padding:7px;margin-bottom:0;cursor:grab;font-weight:800;display:grid;grid-template-rows:58px auto;grid-template-columns:118px;gap:5px;align-items:center;justify-items:center;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;flex:0 0 132px;text-align:center}
-.part:hover{transform:scale(1.03);border-color:var(--gold);box-shadow:0 6px 16px rgba(0,0,0,.18)}
-.part.dragging{opacity:.55}
-.part img{width:108px;height:58px;object-fit:contain;background:#fafafa;border-radius:6px}
-.part span{font-size:.82rem;line-height:1.1}
-.workspace{background:#e9e8de;padding:10px;overflow:hidden;order:1}
-.workspace-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.workspace-title{font-size:1.2rem;font-weight:900;color:#236274}
-.tabs{display:flex;gap:5px;flex-wrap:wrap}
-.tab{background:#efefe9;border:1px solid #aaa;color:#333;border-radius:4px;padding:6px 10px}
-.tab.active{background:#cfe3df;border-color:#638d8a}
-.work-area{display:flex;gap:12px;align-items:start;overflow-x:auto;padding-bottom:10px}
-.case-stage{flex:0 0 760px}
-.monitor-wrap{flex:0 0 360px}
-.case-stage{position:relative;height:585px;background:#111;border:4px solid #565656;overflow:hidden;box-shadow:inset 0 0 25px rgba(0,0,0,.45)}
-.case-shell{position:absolute;inset:0;background:#111}
-.case-metal{position:absolute;left:18px;top:18px;width:520px;height:515px;background:linear-gradient(135deg,#e5e5df,#bcbcb5);border:3px solid #8a8a80;border-radius:4px}
-.board-mount-shadow{position:absolute;left:36px;top:58px;width:470px;height:390px;background:#e9e9e2;border:4px solid #f8f8f8;box-shadow:inset 0 0 0 2px #aaa}
-.case-right{position:absolute;right:18px;top:18px;width:250px;height:515px;background:#0b0b0d;border-left:6px solid #c9c9c1}
-.drive-bays{position:absolute;right:28px;top:28px;width:190px;height:145px;background:#d9d9d4;border:2px solid #888}
-.drive-bays div{height:36px;border-bottom:2px solid #888;position:relative}
-.drive-bays div:after{content:"";position:absolute;right:15px;top:11px;width:70px;height:8px;background:#777;border-radius:8px}
-.psu-space{position:absolute;left:34px;bottom:22px;width:205px;height:112px;background:#f2f2ea;border:4px solid #fff;box-shadow:inset 0 0 0 2px #999}
-.rear-slots{position:absolute;left:0;top:70px;width:24px;height:350px;background:#eee;border-right:2px solid #777}
-.rear-slots span{display:block;width:16px;height:38px;border:2px solid #777;border-radius:8px;margin:10px 3px}
-.case-holes{position:absolute;left:95px;top:80px;width:380px;height:340px}
-.case-holes i{position:absolute;width:10px;height:10px;background:#333;border-radius:50%}
-
-.board-svg{position:absolute;left:42px;top:64px;width:470px;height:390px;display:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
-.board-svg.installed{display:block}
-.zone{position:absolute;border:3px dashed rgba(255,199,44,0);background:rgba(255,199,44,0);border-radius:8px;display:none;transition:.15s}
-.zone.available{display:block}
-.drag-active .zone.available{border-color:rgba(255,199,44,.8);background:rgba(255,199,44,.15)}
-.zone.drag-over{border-color:#31b56a;background:rgba(49,181,106,.25)}
-.zone.correct{outline:3px solid rgba(31,157,99,.85)}
-.zone.incorrect{outline:3px solid rgba(214,69,69,.85)}
-.zone .part{position:absolute;inset:0;width:100%;height:100%;margin:0;display:flex;align-items:center;justify-content:center;padding:0;border:0;background:transparent}
-.zone .part span{display:none}
-.zone .part img{width:100%;height:100%;object-fit:contain;background:transparent}
-.zone .part#ram img{width:72%;height:100%;object-fit:contain}
-.zone .part#gpu img{width:100%;height:92%;object-fit:contain}
-.zone .part#psu img{width:100%;height:100%;object-fit:contain}
-.zone .part#cooler img{width:88%;height:88%;object-fit:contain}
-.case-board-zone{left:42px;top:64px;width:470px;height:390px;display:block}
-.cpu-zone{left:188px;top:160px;width:74px;height:74px}
-.cooler-zone{left:186px;top:72px;width:115px;height:90px}
-.cooler-zone:before{
+html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:var(--sjcc-purple-dark);color:var(--sjcc-white)}
+body{overflow:hidden}
+.lab{
+  height:100vh;
+  display:grid;
+  grid-template-rows:1fr 170px;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.03) 25%,transparent 25%) 0 0/8px 8px,
+    radial-gradient(circle at 50% 18%,rgba(111,91,190,.28),transparent 45%),
+    linear-gradient(135deg,#182b62,#2d3f82 55%,#182b62);
+}
+.workspace{
+  position:relative;
+  overflow:hidden;
+  background:
+repeating-linear-gradient(0deg,rgba(255,255,255,.10) 0 2px,transparent 2px 40px),
+repeating-linear-gradient(90deg,rgba(255,255,255,.10) 0 2px,transparent 2px 40px),
+linear-gradient(135deg,#2e1a47,#412d69 55%,#5a4691);
+}
+.workspace:before{
   content:"";
-  position:absolute;
-  left:54px;
-  top:82px;
-  width:7px;
-  height:78px;
-  background:#ffc72c;
-  box-shadow:0 0 10px rgba(0,0,0,.8);
-  animation:fanArrowPulse 1.3s infinite ease-in-out;
-}
-.cooler-zone:after{
-  content:"";
-  position:absolute;
-  left:40px;
-  top:146px;
-  border-left:17px solid transparent;
-  border-right:17px solid transparent;
-  border-top:26px solid #ffc72c;
-  filter:drop-shadow(0 2px 2px rgba(0,0,0,.75));
-  animation:fanArrowPulse 1.3s infinite ease-in-out;
-}
-@keyframes fanArrowPulse{
-  0%,100%{opacity:.75}
-  50%{opacity:1}
-}
-.ram-zone{left:321px;top:104px;width:72px;height:255px}
-.gpu-zone{left:107px;top:326px;width:310px;height:58px}
-.storage-zone{right:40px;top:58px;width:172px;height:92px}
-.psu-zone{left:48px;bottom:34px;width:176px;height:92px}
-
-
-
-.front-view,.back-view,.drive-view{position:absolute;inset:0;display:none;background:#1a1a1a}
-.front-case{position:absolute;left:285px;top:25px;width:230px;height:510px;background:#2c2c2c;border:8px solid #5b5b5b;border-radius:10px}
-.front-case:before{content:"";position:absolute;left:18px;right:18px;top:20px;height:150px;background:#151515;border:2px solid #777}
-.front-case:after{content:"";position:absolute;left:45px;right:45px;bottom:35px;height:220px;background:radial-gradient(circle,#333 20%,#111 21% 45%,#444 46% 49%,#111 50%);border-radius:50%}
-.front-power-zone{display:none;position:absolute;left:455px;top:55px;width:40px;height:40px;border-radius:50%;border:3px dashed rgba(255,199,44,.75);background:rgba(255,199,44,.18)}
-.front-power-zone:after{content:"⏻";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;font-weight:900}
-.view-front .front-power-zone{display:block}
-.back-case{position:absolute;left:230px;top:25px;width:330px;height:500px;background:#d4d4cd;border:8px solid #555;border-radius:8px}
-.io-shield{position:absolute;left:35px;top:50px;width:95px;height:160px;background:#333;border-radius:6px}
-.io-shield i{display:block;width:55px;height:12px;background:#999;margin:10px auto;border-radius:5px}
-.back-fan{position:absolute;right:45px;top:55px;width:105px;height:105px;border-radius:50%;background:radial-gradient(circle,#111 0 20%,#555 21% 24%,#222 25% 45%,#777 46% 49%,#222 50%)}
-.expansion-back{position:absolute;left:48px;bottom:85px;width:210px;height:150px;background:#eee;border:2px solid #777}
-.expansion-back i{display:block;height:20px;background:#aaa;margin:7px 10px;border-radius:6px}
-.drive-view .rack{position:absolute;right:65px;top:35px;width:240px;height:340px;background:#d6d6cf;border:6px solid #777}
-.drive-view .rack i{display:block;height:55px;border-bottom:3px solid #777;position:relative}
-.drive-view .rack i:after{content:"";position:absolute;left:25px;right:25px;top:16px;height:22px;background:#222;border-radius:4px}
-.view-front .case-shell,.view-back .case-shell,.view-drive .case-shell{display:none}
-.view-front .front-view{display:block}
-.view-back .back-view{display:block}
-.view-drive .drive-view{display:block}
-.view-front .zone,.view-back .zone,.view-drive .zone,.view-front .board-svg,.view-back .board-svg,.view-drive .board-svg{visibility:hidden}
-.view-motherboard .zone,.view-motherboard .board-svg{visibility:visible}
-
-.monitor-wrap{position:relative;height:585px;background:#e9e8de;overflow:hidden}
-.monitor{position:absolute;left:18px;top:50px;width:315px;height:210px;background:#111;border:10px solid #282828;border-radius:10px;box-shadow:inset 0 0 30px #000,0 2px 5px rgba(0,0,0,.4)}
-.monitor-power{position:absolute;right:12px;bottom:6px;width:24px;height:24px;border-radius:50%;padding:0;background:#333;color:#ffc72c;border:2px solid #777;font-size:14px;line-height:14px;z-index:4}
-.monitor-screen{position:absolute;inset:10px;background:#050505;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;text-align:center;overflow:hidden}
-.no-signal{width:120px;height:78px;background:linear-gradient(#f00 0 33%,#0f0 33% 66%,#00f 66% 100%);display:none;align-items:center;justify-content:center;color:white;text-shadow:0 1px 2px #000}
-.monitor-on.no-pc .no-signal{display:flex}
-.win11{
   position:absolute;
   inset:0;
-  display:none;
-  background:
-    radial-gradient(circle at 30% 25%,rgba(255,255,255,.72),transparent 28%),
-    radial-gradient(circle at 72% 38%,rgba(124,196,255,.65),transparent 32%),
-    linear-gradient(145deg,#dff3ff,#e8d8ff 45%,#c7e9ff);
+  background:linear-gradient(135deg,rgba(255,255,255,.04) 25%,transparent 25%) 0 0/10px 10px;
+  opacity:.55;
+  pointer-events:none;
 }
-.win-logo{
+.pc-case{
   position:absolute;
-  left:50%;
-  top:50%;
-  width:76px;
-  height:76px;
-  transform:translate(-50%,-58%);
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:5px;
+  left:58%;
+  top:48%;
+  transform:translate(-50%,-50%);
+  width:min(43vw,570px);
+  height:min(70vh,560px);
+  min-width:460px;
+  min-height:440px;
+  background:linear-gradient(145deg,#212322,#151716);
+  border:18px solid #282a2b;
+  border-radius:6px;
+  box-shadow:0 18px 35px rgba(0,0,0,.45), inset 0 0 0 3px #050607;
 }
-.win-logo span{background:#177ddc;border-radius:2px;box-shadow:0 2px 8px rgba(23,125,220,.28)}
-.taskbar{position:absolute;left:0;right:0;bottom:0;height:34px;background:rgba(255,255,255,.82);display:flex;align-items:center;justify-content:center;gap:8px}
-.taskbar i{width:16px;height:16px;background:#177ddc;border-radius:4px;display:block}
-.pc-on .no-signal{display:none}
-.monitor-on.pc-on .win11{display:block}
-.stand{position:absolute;left:145px;top:260px;width:60px;height:80px;background:#292929}
-.base{position:absolute;left:65px;top:335px;width:220px;height:30px;background:#292929;border-radius:8px}
-.keyboard{position:absolute;left:32px;bottom:100px;width:280px;height:54px;background:#222;border-radius:8px;transform:skewX(-10deg)}
-.mouse{position:absolute;right:10px;bottom:110px;width:55px;height:35px;background:#222;border-radius:50%}
-.power-controls{position:absolute;left:20px;right:20px;bottom:20px;background:#f4f3e8;border:1px solid #bcb7a7;padding:12px;border-radius:10px}
-.power-controls button{width:100%;margin:4px 0}
-.status{font-weight:900;margin-top:8px;color:#333}
-.selected-panel{background:#f4f3e8;border-top:1px solid #bcb7a7;margin-top:8px;padding:8px;min-height:58px;color:#333}
-.feedback{margin-top:12px;font-size:1.05rem;font-weight:900}
-@media(max-width:1220px){
-  .sim-grid{grid-template-columns:1fr}
-  .scenario{border-right:0;border-bottom:1px solid #aaa}
-  .sim-main{grid-template-columns:1fr}
-  .work-area{grid-template-columns:1fr}
-  .shelf-section{min-height:240px}
+.pc-case:after{
+  content:"";
+  position:absolute;
+  top:-18px;
+  right:-58px;
+  width:58px;
+  height:calc(100% + 36px);
+  background:#5a5859;
+  border:3px solid #0a0a0a;
+  border-left:0;
+  border-radius:0 6px 6px 0;
+}
+.top-clip{
+  position:absolute;
+  top:-15px;
+  width:42px;
+  height:9px;
+  border:3px solid #050505;
+  border-top:0;
+  background:#111;
+  border-radius:0 0 4px 4px;
+}
+.top-clip.one{left:34px}
+.top-clip.two{left:50%;transform:translateX(-50%)}
+.top-clip.three{right:34px}
+.inner{
+  position:absolute;
+  inset:20px;
+  border:3px solid #090909;
+  background:#161918;
+  box-shadow:inset 0 0 45px rgba(0,0,0,.75);
+}
+.panel-slot{
+  position:absolute;
+  left:24px;
+  top:22px;
+  width:47%;
+  height:33%;
+  background:linear-gradient(145deg,#242827,#151817);
+  border:2px solid #070707;
+  border-radius:5px;
+  box-shadow:inset 0 0 22px rgba(0,0,0,.75);
+}
+.warning{
+  position:absolute;
+  left:34px;
+  top:20px;
+  width:62px;
+  height:58px;
+  filter:drop-shadow(0 4px 3px rgba(0,0,0,.55));
+}
+.airflow{
+  position:absolute;
+  right:24px;
+  top:24px;
+  width:31%;
+  height:52%;
+  display:grid;
+  grid-template-rows:1fr 1fr;
+  gap:12px;
+}
+.mesh{
+  border:3px solid #151515;
+  background:
+    radial-gradient(circle,#2d2a6d 0 3px,transparent 4px) 0 0/13px 13px,
+    #060707;
+  box-shadow:inset 0 0 22px rgba(0,0,0,.85);
+}
+.separator{
+  position:absolute;
+  left:0;
+  right:0;
+  top:67%;
+  height:3px;
+  background:#2e302f;
+  border-top:1px solid #0b0b0b;
+}
+.bottom-vent{
+  position:absolute;
+  left:24px;
+  bottom:26px;
+  width:67%;
+  height:23%;
+  background:#292b2b;
+}
+.bottom-vent:before{
+  content:"";
+  position:absolute;
+  inset:16px 78px 15px 16px;
+  background:repeating-linear-gradient(135deg,transparent 0 12px,#080909 13px 20px,transparent 21px 32px);
+  border-radius:4px;
+}
+.shelf{
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.035) 25%,transparent 25%) 0 0/8px 8px,
+    linear-gradient(180deg,#202f63 0,#202f63 42%,#090812 43%,#07060d 100%);
+  display:grid;
+  grid-template-rows:12px 1fr;
+  border-top:1px solid rgba(255,255,255,.15);
+}
+.shelf-title{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:0;
+  font-weight:900;
+  letter-spacing:.01em;
+  color:#f4f3ff;
+}
+.parts{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:clamp(24px,4vw,64px);
+  padding:8px 26px 22px;
+}
+.part{
+  width:82px;
+  height:72px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:0;
+  background:transparent;
+  cursor:grab;
+  transition:transform .15s ease, filter .15s ease;
+}
+.part:hover{transform:translateY(-4px) scale(1.06);filter:drop-shadow(0 0 12px rgba(255,199,44,.5))}
+.part svg{width:78px;height:68px}
+
+.glass-panel{
+  position:absolute;
+  left:6%;
+  top:12%;
+  width:min(34vw,480px);
+  height:min(46vh,370px);
+  min-width:330px;
+  min-height:270px;
+  border:18px solid #2a2d2d;
+  border-radius:4px;
+  background:linear-gradient(135deg,rgba(205,220,255,.16),rgba(255,255,255,.04));
+  box-shadow:0 16px 28px rgba(0,0,0,.42), inset 0 0 30px rgba(255,255,255,.08);
+  cursor:grab;
+}
+.glass-panel:before{
+  content:"";
+  position:absolute;
+  inset:10px;
+  background:
+    repeating-linear-gradient(0deg,rgba(255,255,255,.16) 0 2px,transparent 2px 40px),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.16) 0 2px,transparent 2px 40px);
+  opacity:.7;
+}
+.glass-panel:after{
+  content:"";
+  position:absolute;
+  left:-23px;
+  top:38%;
+  width:9px;
+  height:42px;
+  background:#1a1c1c;
+  border-radius:6px;
+  box-shadow:0 190px 0 #1a1c1c;
+}
+.glass-warning{
+  position:absolute;
+  left:30px;
+  top:28px;
+  width:62px;
+  height:58px;
+  z-index:2;
+  filter:drop-shadow(0 4px 3px rgba(0,0,0,.55));
+}
+
+
+.glass-drop-zone{
+  position:absolute;
+  left:58%;
+  top:48%;
+  transform:translate(-50%,-50%);
+  width:min(43vw,570px);
+  height:min(70vh,560px);
+  min-width:460px;
+  min-height:440px;
+  border:none !important;
+  border-radius:8px;
+  pointer-events:auto;
+  z-index:4;
+}
+.removed-tray{
+  position:absolute;
+  left:5%;
+  top:10%;
+  width:min(36vw,510px);
+  height:min(50vh,400px);
+  min-width:350px;
+  min-height:290px;
+  border:none !important;
+  border-radius:8px;
+  pointer-events:auto;
+  z-index:3;
+}
+.drag-active .glass-drop-zone,
+.drag-active .removed-tray{
+  border-color:rgba(255,199,44,.75);
+  background:rgba(255,199,44,.09);
+}
+.drag-over{
+  border-color:#ffc72c !important;
+  background:rgba(255,199,44,.18) !important;
+  box-shadow:0 0 22px rgba(255,199,44,.35);
+}
+.glass-panel{
+  z-index:10;
+}
+.glass-panel.dragging{
+  opacity:.6;
+  filter:drop-shadow(0 0 18px rgba(255,199,44,.55));
+}
+.glass-panel.on-case{
+  left:58%;
+  top:48%;
+  transform:translate(-50%,-50%);
+  width:min(43vw,570px);
+  height:min(70vh,560px);
+  min-width:460px;
+  min-height:440px;
+  background:linear-gradient(135deg,rgba(205,220,255,.18),rgba(255,255,255,.04));
+  z-index:20;
+}
+.glass-panel.removed{
+  left:6%;
+  top:12%;
+  transform:none;
+}
+.part[data-draggable="true"]{
+  cursor:grab;
+}
+.part.dragging{
+  opacity:.55;
+}
+
+
+.free-dragging{
+  position:fixed !important;
+  transform:none !important;
+  z-index:9999 !important;
+  pointer-events:none !important;
+  opacity:.88 !important;
+  filter:drop-shadow(0 0 22px rgba(255,199,44,.7)) !important;
+}
+.glass-panel.correct-placed{
+  outline:4px solid rgba(255,199,44,.9);
+  box-shadow:0 0 26px rgba(255,199,44,.45),0 16px 28px rgba(0,0,0,.42), inset 0 0 30px rgba(255,255,255,.08);
+}
+
+
+/* Smooth SJCC drag engine */
+[data-draggable="true"]{
+  touch-action:none;
+  user-select:none;
+  cursor:grab;
+}
+.drag-clone{
+  position:fixed !important;
+  z-index:99999 !important;
+  pointer-events:none !important;
+  margin:0 !important;
+  transform:rotate(-2deg) scale(1.03) !important;
+  opacity:.92 !important;
+  filter:drop-shadow(0 0 22px rgba(255,199,44,.7)) !important;
+}
+.drag-source-hidden{
+  opacity:.28 !important;
+}
+.drop-zone-active{
+  border-color:rgba(255,199,44,.78) !important;
+  background:rgba(255,199,44,.10) !important;
+}
+.drop-zone-hover{
+  border-color:#ffc72c !important;
+  background:rgba(255,199,44,.22) !important;
+  box-shadow:0 0 24px rgba(255,199,44,.45) !important;
+}
+.snap-correct{
+  animation:snapCorrect .28s ease-out;
+  outline:4px solid rgba(255,199,44,.95);
+}
+@keyframes snapCorrect{
+  0%{transform:scale(.94)}
+  70%{transform:scale(1.04)}
+  100%{transform:scale(1)}
+}
+.part.returning,
+.glass-panel.returning{
+  transition:left .28s ease, top .28s ease, transform .28s ease, opacity .2s ease;
+}
+
+@media(max-width:900px){
+  body{overflow:auto}
+  .lab{height:auto;min-height:100vh;grid-template-rows:620px auto}
+  .pc-case{min-width:360px;min-height:360px;width:72vw;height:480px}
+  .parts{flex-wrap:wrap;gap:22px}
+  .shelf{min-height:250px}
 }
 </style>
+
+
+<style id="stable-panel-drag">
+.glass-panel{
+  touch-action:none;
+  user-select:none;
+  cursor:grab;
+}
+.glass-panel.on-case{
+  position:absolute !important;
+  left:58% !important;
+  top:48% !important;
+  transform:translate(-50%,-50%) !important;
+  width:min(43vw,570px) !important;
+  height:min(70vh,560px) !important;
+  min-width:460px !important;
+  min-height:440px !important;
+  z-index:30 !important;
+}
+.glass-panel.free-placed{
+  position:absolute !important;
+  transform:none !important;
+  z-index:20 !important;
+}
+.glass-panel.is-moving{
+  position:absolute !important;
+  transform:none !important;
+  z-index:9999 !important;
+  opacity:.92 !important;
+  filter:drop-shadow(0 0 22px rgba(255,199,44,.65)) !important;
+}
+.drag-active .glass-drop-zone{
+  border-color:rgba(255,199,44,.78);
+  background:rgba(255,199,44,.09);
+}
+.glass-drop-zone.drop-zone-hover{
+  border-color:#ffc72c !important;
+  background:rgba(255,199,44,.18) !important;
+  box-shadow:0 0 22px rgba(255,199,44,.35);
+}
+.glass-panel.correct-flash{
+  outline:4px solid rgba(255,199,44,.9);
+}
+</style>
+
+
+<style id="glass-fixed-size">
+.glass-panel{
+  box-sizing:border-box;
+}
+.glass-panel.on-case{
+  width:560px !important;
+  height:540px !important;
+  min-width:560px !important;
+  max-width:560px !important;
+  min-height:540px !important;
+  max-height:540px !important;
+}
+.glass-panel.free-placed{
+  width:560px !important;
+  height:540px !important;
+}
+.glass-panel.is-moving{
+  width:560px !important;
+  height:540px !important;
+}
+</style>
+
+
+<style id="fixed-stage-size">
+body{
+  overflow:auto !important;
+}
+.lab{
+  width:1366px !important;
+  height:768px !important;
+  min-width:1366px !important;
+  min-height:768px !important;
+  grid-template-rows:1fr 118px !important;
+}
+.workspace{
+  width:1366px !important;
+  height:650px !important;
+  min-width:1366px !important;
+  min-height:650px !important;
+}
+.pc-case{
+  width:570px !important;
+  height:560px !important;
+  min-width:570px !important;
+  min-height:560px !important;
+  max-width:570px !important;
+  max-height:560px !important;
+  left:50% !important;
+  top:50% !important;
+  transform:translate(-50%,-50%) !important;
+}
+.glass-drop-zone{
+  width:570px !important;
+  height:560px !important;
+  min-width:570px !important;
+  min-height:560px !important;
+  max-width:570px !important;
+  max-height:560px !important;
+  left:50% !important;
+  top:50% !important;
+  transform:translate(-50%,-50%) !important;
+}
+.glass-panel.on-case{
+  width:570px !important;
+  height:560px !important;
+  min-width:570px !important;
+  max-width:570px !important;
+  min-height:560px !important;
+  max-height:560px !important;
+  left:50% !important;
+  top:50% !important;
+  transform:translate(-50%,-50%) !important;
+}
+.glass-panel.free-placed,
+.glass-panel.is-moving{
+  width:570px !important;
+  height:560px !important;
+  min-width:570px !important;
+  max-width:570px !important;
+  min-height:560px !important;
+  max-height:560px !important;
+}
+.shelf{
+  width:1366px !important;
+  height:118px !important;
+  min-width:1366px !important;
+}
+.parts{
+  height:106px !important;
+  padding:8px 26px 18px !important;
+}
+@media(max-width:900px){
+  .lab{
+    width:1366px !important;
+    height:768px !important;
+    min-width:1366px !important;
+    min-height:768px !important;
+    grid-template-rows:1fr 118px !important;
+  }
+  .pc-case{
+    width:570px !important;
+    height:560px !important;
+    min-width:570px !important;
+    min-height:560px !important;
+  }
+}
+</style>
+
+
+<style id="hide-all-dashed-guides">
+.glass-drop-zone,
+.glass-drop-zone.drop-zone-hover,
+.drop-zone,
+.drop-zone-hover{
+    border:none !important;
+    outline:none !important;
+    box-shadow:none !important;
+    background:transparent !important;
+}
+</style>
+
+
+<style id="sjcc-bottom-toolbar-theme">
+.shelf{
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.035) 25%,transparent 25%) 0 0/10px 10px,
+    linear-gradient(180deg,#4f3b93 0%,#3a286f 46%,#24164a 100%) !important;
+  border-top:3px solid #ffc72c !important;
+  box-shadow:0 -10px 26px rgba(46,26,71,.38) !important;
+  grid-template-rows:12px 1fr !important;
+}
+.shelf-title{
+  min-height:0 !important;
+  height:12px !important;
+  font-size:0 !important;
+}
+.parts{
+  gap:18px !important;
+  padding:10px 28px 18px !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+.part{
+  width:118px !important;
+  height:92px !important;
+  padding:8px 10px !important;
+  border:1px solid rgba(255,255,255,.18) !important;
+  border-radius:12px !important;
+  background:linear-gradient(180deg,#5a4691,#35205f) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 8px 18px rgba(20,10,40,.28) !important;
+  display:grid !important;
+  grid-template-rows:54px 22px !important;
+  align-items:center !important;
+  justify-items:center !important;
+}
+.part:hover{
+  transform:translateY(-4px) scale(1.03) !important;
+  border-color:#ffc72c !important;
+  box-shadow:0 0 18px rgba(255,199,44,.36), inset 0 1px 0 rgba(255,255,255,.16) !important;
+  filter:none !important;
+}
+.part.selected{
+  border-color:#ffc72c !important;
+  background:linear-gradient(180deg,#6a56a8,#412a78) !important;
+  box-shadow:0 0 20px rgba(255,199,44,.45), inset 0 0 0 1px rgba(255,199,44,.45) !important;
+}
+.part img,
+.part svg{
+  width:64px !important;
+  height:50px !important;
+  object-fit:contain !important;
+}
+.part::after{
+  content:attr(title);
+  color:#ffffff;
+  font-size:.74rem;
+  line-height:1.05;
+  font-weight:800;
+  text-align:center;
+  max-width:104px;
+  overflow:hidden;
+  display:block;
+}
+.part span{
+  display:none !important;
+}
+@media(max-width:900px){
+  .parts{
+    flex-wrap:wrap !important;
+    gap:14px !important;
+  }
+  .part{
+    width:110px !important;
+  }
+}
+</style>
+
+<style>
+/* ==== Invisible drop zones ==== */
+.drop-zone,
+.dropzone,
+.drop-target,
+.drop-area{
+    background:transparent !important;
+    border:none !important;
+    outline:none !important;
+    box-shadow:none !important;
+}
+
+.drop-zone.active,
+.drop-zone.hover,
+.drop-zone.drag-over,
+.drop-zone.correct,
+.dropzone.active,
+.dropzone.hover,
+.drop-target.active,
+.drop-target.hover,
+.drop-area.active,
+.drop-area.hover{
+    background:transparent !important;
+    border:none !important;
+    outline:none !important;
+    box-shadow:none !important;
+}
+</style>
+
+<style id="realistic-component-drag-v19">
+.workspace-component{
+  position:absolute;
+  z-index:40;
+  cursor:grab;
+  touch-action:none;
+  user-select:none;
+}
+.workspace-component.dragging-live{
+  z-index:9999;
+  cursor:grabbing;
+  opacity:.94;
+}
+.workspace-component svg{
+  width:100%;
+  height:100%;
+  display:block;
+}
+.workspace-component.motherboard{width:300px;height:285px}
+.workspace-component.cpu{width:82px;height:82px}
+.workspace-component.ram{width:210px;height:55px}
+.workspace-component.nvme{width:150px;height:46px}
+.workspace-component.cpuFan{width:135px;height:135px}
+.workspace-component.gpu{width:260px;height:75px}
+.workspace-component.psu{width:210px;height:125px}
+.workspace-component.caseFan{width:140px;height:140px}
+
+.component-source-hidden{
+  opacity:.35;
+}
+.part{
+  cursor:grab !important;
+}
+.part:active{
+  cursor:grabbing !important;
+}
+</style>
+
+
+<style id="remove-left-tray-glow-only">
+.drag-active .removed-tray,
+.removed-tray,
+.removed-tray.drop-zone-hover,
+.removed-tray.drag-over{
+  background:transparent !important;
+  border:none !important;
+  outline:none !important;
+  box-shadow:none !important;
+  filter:none !important;
+}
+</style>
+
+
+<style id="motherboard-html-step-v22">
+/* Motherboard step built from SVG and CSS only. No bitmap images. */
+.part#motherboard svg{
+  width:58px !important;
+  height:64px !important;
+  display:block;
+}
+.part.locked-for-step{
+  opacity:.32 !important;
+  pointer-events:none !important;
+}
+.part#motherboard.source-used{
+  opacity:.35 !important;
+}
+.motherboard-target{
+  position:absolute;
+  left:429px;
+  top:54px;
+  width:248px;
+  height:283px;
+  border-radius:6px;
+  z-index:6;
+  pointer-events:none;
+}
+.shelf-return-zone{
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:1366px;
+  height:118px;
+  z-index:5;
+  pointer-events:none;
+}
+.workspace-motherboard{
+  position:absolute;
+  width:248px;
+  height:283px;
+  z-index:65;
+  cursor:grab;
+  touch-action:none;
+  user-select:none;
+}
+.workspace-motherboard.dragging-live{
+  z-index:9999;
+  cursor:grabbing;
+  opacity:.96;
+}
+.workspace-motherboard svg{
+  width:100%;
+  height:100%;
+  display:block;
+  pointer-events:none;
+}
+.workspace-motherboard.placed{
+  filter:drop-shadow(0 8px 8px rgba(0,0,0,.35));
+}
+.workspace-motherboard.near-target{
+  filter:drop-shadow(0 0 14px rgba(255,199,44,.45));
+}
+</style>
+
+
+<style id="motherboard-placement-fix-v24">
+.motherboard-target{
+  left:430px !important;
+  top:76px !important;
+  width:228px !important;
+  height:272px !important;
+}
+
+.workspace-motherboard{
+  width:228px !important;
+  height:272px !important;
+  z-index:24 !important;
+}
+
+.workspace-motherboard.dragging-live{
+  z-index:9999 !important;
+}
+
+.workspace-motherboard.placed{
+  z-index:24 !important;
+  filter:drop-shadow(0 7px 7px rgba(0,0,0,.35));
+}
+
+.glass-panel.on-case{
+  z-index:50 !important;
+}
+
+.pc-case{
+  z-index:10 !important;
+}
+</style>
+
+
+<style id="cpu-install-step-v25">
+/* CPU step: SVG/CSS only, one CPU at a time. */
+.part#cpu svg{
+  width:58px !important;
+  height:58px !important;
+}
+.cpu-target{
+  position:absolute;
+  left:535px;
+  top:156px;
+  width:54px;
+  height:54px;
+  border-radius:6px;
+  z-index:70;
+  pointer-events:none;
+}
+.workspace-cpu{
+  position:absolute;
+  width:72px;
+  height:72px;
+  z-index:75;
+  cursor:grab;
+  touch-action:none;
+  user-select:none;
+}
+.workspace-cpu.dragging-live{
+  z-index:9999;
+  cursor:grabbing;
+  opacity:.96;
+}
+.workspace-cpu svg{
+  width:100%;
+  height:100%;
+  display:block;
+  pointer-events:none;
+}
+.workspace-cpu.near-target{
+  filter:drop-shadow(0 0 14px rgba(255,199,44,.45));
+}
+.workspace-cpu.placed{
+  width:48px !important;
+  height:48px !important;
+  z-index:76;
+  filter:drop-shadow(0 3px 4px rgba(0,0,0,.35));
+}
+.part#cpu.source-used{
+  opacity:.35 !important;
+}
+.part.unlocked-part{
+  opacity:1 !important;
+  pointer-events:auto !important;
+}
+</style>
+
+
+<style id="cpu-layer-center-fix-v26">
+.workspace-motherboard.placed{
+  z-index:24 !important;
+}
+.workspace-cpu{
+  z-index:26 !important;
+}
+.workspace-cpu.dragging-live{
+  z-index:9999 !important;
+}
+.workspace-cpu.placed{
+  z-index:26 !important;
+  width:48px !important;
+  height:48px !important;
+}
+.glass-panel.on-case{
+  z-index:50 !important;
+}
+.cpu-target{
+  left:535px !important;
+  top:161px !important;
+  width:48px !important;
+  height:48px !important;
+}
+</style>
+
+
+<style id="cpu-fan-install-step-v29">
+.part#cpuFan svg{width:62px!important;height:62px!important}
+.part#cpuFan.source-used{opacity:.35!important}
+.cpu-fan-target{position:absolute;left:515px;top:136px;width:88px;height:88px;border-radius:50%;z-index:80;pointer-events:none}
+.workspace-cpu-fan{position:absolute;width:112px;height:112px;z-index:82;cursor:grab;touch-action:none;user-select:none}
+.workspace-cpu-fan.dragging-live{z-index:9999;cursor:grabbing;opacity:.96}
+.workspace-cpu-fan svg{width:100%;height:100%;display:block;pointer-events:none}
+.workspace-cpu-fan.near-target{filter:drop-shadow(0 0 14px rgba(255,199,44,.45))}
+.workspace-cpu-fan.placed{width:92px!important;height:92px!important;z-index:82!important;filter:drop-shadow(0 5px 5px rgba(0,0,0,.42))}
+.workspace-motherboard.placed{z-index:24!important}
+.workspace-cpu.placed{z-index:26!important}
+.glass-panel.on-case{z-index:40!important}
+</style>
+
+
+<style id="cpu-fan-placed-visual-fix-v31">
+.cpu-fan-target{
+  left:513px !important;
+  top:132px !important;
+  width:98px !important;
+  height:98px !important;
+}
+
+.workspace-cpu-fan.placed{
+  width:104px !important;
+  height:104px !important;
+  z-index:30 !important;
+  filter:drop-shadow(0 6px 6px rgba(0,0,0,.45)) !important;
+}
+</style>
+
+
+<style id="ram-install-step-v33">
+/* RAM step: SVG/CSS only, one RAM stick at a time. */
+.part#ram svg{
+  width:64px !important;
+  height:48px !important;
+}
+.part#ram.source-used{
+  opacity:.35 !important;
+}
+.ram-target{
+  position:absolute;
+  left:610px;
+  top:105px;
+  width:18px;
+  height:132px;
+  border-radius:8px;
+  z-index:86;
+  pointer-events:none;
+}
+.workspace-ram{
+  position:absolute;
+  width:168px;
+  height:56px;
+  z-index:32;
+  cursor:grab;
+  touch-action:none;
+  user-select:none;
+}
+.workspace-ram.dragging-live{
+  z-index:9999;
+  cursor:grabbing;
+  opacity:.96;
+}
+.workspace-ram svg{
+  width:100%;
+  height:100%;
+  display:block;
+  pointer-events:none;
+}
+.workspace-ram.near-target{
+  filter:drop-shadow(0 0 14px rgba(255,199,44,.45));
+}
+.workspace-ram.placed{
+  width:18px !important;
+  height:132px !important;
+  z-index:32 !important;
+  filter:drop-shadow(0 0 8px rgba(255,199,44,.35)) drop-shadow(0 4px 4px rgba(0,0,0,.42));
+}
+.workspace-motherboard.placed{z-index:24 !important}
+.workspace-cpu.placed{z-index:26 !important}
+.workspace-cpu-fan.placed{z-index:30 !important}
+.glass-panel.on-case{z-index:50 !important}
+</style>
+
+
+<style id="nvme-install-step-v38">
+/* NVMe M.2 step: SVG/CSS only, one NVMe at a time. */
+.part#nvme svg{
+  width:64px !important;
+  height:48px !important;
+}
+.part#nvme.source-used{
+  opacity:.35 !important;
+}
+.nvme-target{
+  position:absolute;
+  left:503px;
+  top:269px;
+  width:96px;
+  height:26px;
+  border-radius:8px;
+  z-index:88;
+  pointer-events:none;
+}
+.workspace-nvme{
+  position:absolute;
+  width:120px;
+  height:42px;
+  z-index:34;
+  cursor:grab;
+  touch-action:none;
+  user-select:none;
+}
+.workspace-nvme.dragging-live{
+  z-index:9999;
+  cursor:grabbing;
+  opacity:.96;
+}
+.workspace-nvme svg{
+  width:100%;
+  height:100%;
+  display:block;
+  pointer-events:none;
+}
+.workspace-nvme.near-target{
+  filter:drop-shadow(0 0 14px rgba(255,199,44,.45));
+}
+.workspace-nvme.placed{
+  width:96px !important;
+  height:26px !important;
+  z-index:34 !important;
+  filter:drop-shadow(0 4px 4px rgba(0,0,0,.42));
+}
+.workspace-motherboard.placed{z-index:24 !important}
+.workspace-cpu.placed{z-index:26 !important}
+.workspace-cpu-fan.placed{z-index:30 !important}
+.workspace-ram.placed{z-index:32 !important}
+.glass-panel.on-case{z-index:50 !important}
+</style>
+
+
+<style id="motherboard-v40-target-adjustments">
+.cpu-target{
+  left:535px !important;
+  top:161px !important;
+  width:48px !important;
+  height:48px !important;
+}
+.cpu-fan-target{
+  left:513px !important;
+  top:132px !important;
+  width:98px !important;
+  height:98px !important;
+}
+.ram-target{
+  left:610px !important;
+  top:104px !important;
+  width:18px !important;
+  height:136px !important;
+}
+.nvme-target{
+  left:504px !important;
+  top:285px !important;
+  width:96px !important;
+  height:26px !important;
+}
+</style>
+
+
+<style id="visible-m2-slot-overlay-v42">
+.m2-slot-overlay{
+  position:absolute;
+  left:505px;
+  top:286px;
+  width:94px;
+  height:12px;
+  z-index:25;
+  pointer-events:none;
+  display:none;
+  border-radius:3px;
+  background:#f4f4f4;
+  border:2px solid #111;
+  box-shadow:0 2px 3px rgba(0,0,0,.45);
+}
+.m2-slot-overlay::before{
+  content:"";
+  position:absolute;
+  left:8px;
+  top:3px;
+  width:60px;
+  height:3px;
+  border-radius:2px;
+  background:#9a9a9a;
+}
+.m2-slot-overlay::after{
+  content:"";
+  position:absolute;
+  right:-10px;
+  top:-4px;
+  width:12px;
+  height:18px;
+  border-radius:2px;
+  background:#e6e6e6;
+  border:2px solid #111;
+}
+.m2-slot-overlay.show{
+  display:block;
+}
+.workspace-nvme.placed ~ .m2-slot-overlay{
+  display:none !important;
+}
+.glass-panel.on-case{
+  z-index:50 !important;
+}
+</style>
+
 </head>
 <body>
-<header>
-<nav>
-  <a href="index.html">← Back to Course Hub</a>
-  <button class="theme-btn" onclick="toggleTheme()">Dark Mode</button>
-</nav>
-<section class="hero">
-  <h1>PC Hardware <span>Interactive Simulator</span></h1>
-  <p>Students identify parts, install components into the correct case and motherboard locations, connect power and data cables, then test whether the system boots.</p>
-</section>
-</header>
+<div class="lab">
+  <main class="workspace" aria-label="SJCC PC hardware repair workspace">
+    
+    <section class="glass-panel removed-part on-case" id="glassPanel" aria-label="Removable side glass panel" data-draggable="true">
+      <svg class="warning glass-warning" viewBox="0 0 80 70" aria-label="warning">
+        <path d="M40 4 76 66H4Z" fill="#ffd439" stroke="#111" stroke-width="5"/>
+        <path d="M40 22v22" stroke="#111" stroke-width="8" stroke-linecap="round"/>
+        <circle cx="40" cy="56" r="4" fill="#111"/>
+      </svg>
+    </section>
 
-<main>
-<section class="card">
-  <h2>Learning Objectives</h2>
-  <ul>
-    <li>Identify desktop hardware components and common internal connectors.</li>
-    <li>Install parts in the proper location and sequence.</li>
-    <li>Recognize motherboard slots and headers without placement labels.</li>
-    <li>Test a completed build by powering on the PC and monitor.</li>
-  </ul>
-</section>
+    <section class="pc-case" aria-label="Open computer case">
+      <span class="top-clip one"></span>
+      <span class="top-clip two"></span>
+      <span class="top-clip three"></span>
+      <div class="inner">
+        <div class="panel-slot">
 
-<section class="card">
-  <h2>Component Guide</h2>
-  <div class="grid" id="componentGuide"></div>
-</section>
-
-<section class="card">
-  <h2>Interactive PC Assembly</h2>
-  <div class="lab-frame">
-    <div class="lab-topbar">
-      <div class="brand">SJCC LabSim</div>
-      <div class="top-actions">
-        <button onclick="resetLab()">Start Over</button>
-        <button onclick="gradeBuild()">Score Lab</button>
+        </div>
+        <div class="airflow">
+          <div class="mesh"></div>
+          <div class="mesh"></div>
+        </div>
+        <div class="separator"></div>
+        <div class="bottom-vent"></div>
       </div>
-    </div>
+    </section>
+    
+    <div class="glass-drop-zone" id="glassDropZone" aria-label="Glass panel drop target"></div>
+    <div class="removed-tray" id="removedTray" aria-label="Removed parts tray"></div>
+    <div class="motherboard-target" id="motherboardTarget" aria-label="Motherboard install target"></div>
+    <div class="cpu-target" id="cpuTarget" aria-label="CPU socket target"></div>
+    <div class="cpu-fan-target" id="cpuFanTarget" aria-label="CPU fan target"></div>
+    <div class="ram-target" id="ramTarget" aria-label="RAM DIMM slot target"></div>
+    <div class="nvme-target" id="nvmeTarget" aria-label="NVMe M.2 slot target"></div>
+    <div class="m2-slot-overlay" id="m2SlotOverlay" aria-hidden="true"></div>
+    <div class="shelf-return-zone" id="shelfReturnZone" aria-label="Return motherboard to shelf"></div>
+  </main>
 
-    <div class="sim-grid">
-      <aside class="scenario">
-        <h3>Scenario</h3>
-        <p>Install the hardware, inspect the case from each view, then use the front power button or the power test button to start the computer.</p>
-        <ul>
-          <li>Install the motherboard first.</li>
-          <li>Front view hides internal motherboard parts and shows the case front power button.</li>
-          
-          <li>The monitor loads Windows 11 only when the build is correct.</li>
-        </ul>
-      </aside>
-
-      <div class="sim-main">
-        <aside class="shelf">
-          <div class="shelf-head"><span>Shelf</span><span>◀</span></div>
-          <div class="shelf-section drop-bin" id="partsList"></div>
-        </aside>
-
-        <section class="workspace">
-          <div class="workspace-head">
-            <div class="workspace-title">Workspace</div>
-            <div class="tabs">
-              <button class="tab active" data-view="motherboard" onclick="setView('motherboard')">Motherboard</button>
-              <button class="tab" data-view="front" onclick="setView('front')">Front</button>
-              
-            </div>
-          </div>
-
-          <div class="work-area">
-            <div class="case-stage view-motherboard" id="caseStage">
-              <div class="case-shell">
-                <div class="case-metal"></div>
-                <div class="board-mount-shadow"></div>
-                <div class="case-right"></div>
-                <div class="drive-bays"><div></div><div></div><div></div></div>
-                <div class="psu-space"></div>
-                <div class="rear-slots"><span></span><span></span><span></span><span></span><span></span></div>
-                <div class="case-holes">
-                  <i style="left:20px;top:20px"></i><i style="left:230px;top:30px"></i><i style="left:110px;top:170px"></i><i style="left:290px;top:250px"></i><i style="left:55px;top:290px"></i>
-                </div>
-              </div>
-
-              <div class="front-view">
-                <div class="front-case"></div>
-                <button class="front-power-zone" onclick="turnOnComputer()" aria-label="Front power button"></button>
-              </div>
-              <div class="back-view">
-                <div class="back-case">
-                  <div class="io-shield"><i></i><i></i><i></i><i></i><i></i></div>
-                  <div class="back-fan"></div>
-                  <div class="expansion-back"><i></i><i></i><i></i><i></i><i></i></div>
-                </div>
-              </div>
-              <div class="drive-view">
-                <div class="rack"><i></i><i></i><i></i><i></i><i></i></div>
-              </div>
-
-              <svg class="board-svg" id="installedBoard" viewBox="0 0 470 390" aria-label="Installed motherboard">
-                <defs>
-                  <linearGradient id="pcb" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0" stop-color="#141b19"/>
-                    <stop offset="1" stop-color="#0a0e0d"/>
-                  </linearGradient>
-                  <pattern id="traces" width="22" height="22" patternUnits="userSpaceOnUse">
-                    <path d="M2 11H14M14 11V4M14 11V20M8 19H21" fill="none" stroke="#8c9892" stroke-width="1" opacity=".42"/>
-                  </pattern>
-                </defs>
-                <rect x="0" y="0" width="470" height="390" rx="8" fill="url(#pcb)" stroke="#777" stroke-width="4"/>
-                <rect x="0" y="0" width="470" height="390" rx="8" fill="url(#traces)" opacity=".8"/>
-                <rect x="12" y="28" width="72" height="190" rx="4" fill="#d7d7d0" stroke="#777" stroke-width="3"/>
-                <rect x="28" y="45" width="34" height="14" fill="#333"/><rect x="28" y="75" width="42" height="14" fill="#333"/><rect x="28" y="107" width="30" height="13" fill="#333"/><rect x="28" y="140" width="42" height="13" fill="#333"/><rect x="28" y="174" width="35" height="14" fill="#333"/>
-                <rect x="146" y="96" width="98" height="98" rx="8" fill="#d8d0b0" stroke="#777" stroke-width="4"/>
-                <rect x="161" y="111" width="68" height="68" rx="4" fill="#24352d" stroke="#999" stroke-width="2"/>
-                <circle cx="195" cy="145" r="22" fill="#101010" opacity=".28"/>
-                <rect x="279" y="40" width="15" height="270" fill="#161616" stroke="#aaa" stroke-width="2"/>
-                <rect x="302" y="40" width="15" height="270" fill="#161616" stroke="#aaa" stroke-width="2"/>
-                <rect x="325" y="40" width="15" height="270" fill="#161616" stroke="#aaa" stroke-width="2"/>
-                <rect x="348" y="40" width="15" height="270" fill="#161616" stroke="#aaa" stroke-width="2"/>
-                <rect x="72" y="270" width="310" height="24" rx="4" fill="#111" stroke="#999" stroke-width="2"/>
-                <rect x="82" y="320" width="185" height="18" rx="4" fill="#111" stroke="#999" stroke-width="2"/>
-                <rect x="390" y="82" width="42" height="124" rx="4" fill="#e0d6b8" stroke="#999" stroke-width="3"/>
-                <rect x="390" y="230" width="42" height="36" rx="3" fill="#111" stroke="#ddd" stroke-width="2"/>
-                <rect x="390" y="282" width="42" height="44" rx="3" fill="#111" stroke="#ddd" stroke-width="2"/>
-                <circle cx="78" cy="142" r="35" fill="#222" stroke="#999" stroke-width="4"/>
-                <circle cx="78" cy="142" r="18" fill="#111"/>
-                <circle cx="78" cy="306" r="20" fill="#c7c7c7" stroke="#777" stroke-width="3"/>
-                <rect x="338" y="344" width="82" height="22" rx="2" fill="#111" stroke="#ddd" stroke-width="2"/>
-                <rect x="26" y="345" width="104" height="22" rx="3" fill="#111" stroke="#aaa" stroke-width="2"/>
-                <rect x="170" y="342" width="102" height="24" rx="3" fill="#111" stroke="#aaa" stroke-width="2"/>
-                <rect x="86" y="16" width="72" height="38" rx="3" fill="#111" stroke="#ddd" stroke-width="2"/>
-              </svg>
-
-              <div class="zone case-board-zone available" data-answer="motherboard"></div>
-              <div class="zone cpu-zone" data-answer="cpu"></div>
-              <div class="zone ram-zone" data-answer="ram"></div>
-              <div class="zone gpu-zone" data-answer="gpu"></div>
-              <div class="zone storage-zone" data-answer="storage"></div>
-              <div class="zone psu-zone" data-answer="psu"></div>
-              <div class="zone cooler-zone" data-answer="cooler"></div>
-              </div>
-
-            <div class="monitor-wrap" id="monitorWrap">
-              <div class="monitor">
-                <button class="monitor-power" onclick="toggleMonitor()" aria-label="Monitor power">⏻</button>
-                <div class="monitor-screen">
-                  <div class="no-signal">No Signal<br>Detected</div>
-                  <div class="win11">
-                    <div class="win-logo"><span></span><span></span><span></span><span></span></div>
-                    <div class="taskbar"><i></i><i></i><i></i><i></i></div>
-                  </div>
-                </div>
-              </div>
-              <div class="stand"></div>
-              <div class="base"></div>
-              <div class="keyboard"></div>
-              <div class="mouse"></div>
-              <div class="power-controls">
-                <div>Turn on the PC from the case front first. Then turn on the monitor.</div>
-                <div class="status" id="powerStatus">PC: Off | Monitor: Off</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="selected-panel" id="selectedPanel">Selected Component: none</div>
-          <div class="feedback" id="feedback"></div>
-        </section>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="card">
-  <h2>Reflection Questions</h2>
-  <ol>
-    <li>Why should the motherboard be installed before most internal components?</li>
-    <li>How did you identify the RAM and PCIe slots without labels?</li>
-    <li>What symptoms would appear if the power supply connections were incomplete?</li>
-    <li>Why should a technician test the system after installation?</li>
-  </ol>
-</section>
-</main>
+  <aside class="shelf" aria-label="Component shelf">
+    <div class="shelf-title"></div>
+    <div class="parts" id="parts"></div>
+  </aside>
+</div>
 
 <script>
-function svgData(svg){return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg)}
-const simpleIcons = {
-motherboard:`<svg viewBox="0 0 120 90"><rect x="10" y="8" width="100" height="74" rx="6" fill="#315b45"/><rect x="45" y="25" width="28" height="28" fill="#d9d0af"/><rect x="82" y="18" width="6" height="55" fill="#222"/><rect x="91" y="18" width="6" height="55" fill="#222"/><rect x="25" y="62" width="60" height="7" fill="#111"/></svg>`,
-cpu:`<svg viewBox="0 0 120 90"><rect x="36" y="20" width="48" height="48" rx="6" fill="#b8b8a8" stroke="#555" stroke-width="3"/><rect x="47" y="31" width="26" height="26" fill="#2a2a2a"/></svg>`,
-ram:`<svg viewBox="0 0 120 90"><rect x="12" y="34" width="96" height="22" rx="2" fill="#16824a"/><rect x="20" y="26" width="6" height="8" fill="#d6aa2e"/><rect x="29" y="26" width="6" height="8" fill="#d6aa2e"/><rect x="38" y="26" width="6" height="8" fill="#d6aa2e"/><rect x="47" y="26" width="6" height="8" fill="#d6aa2e"/><rect x="24" y="40" width="15" height="11" fill="#151515"/><rect x="45" y="40" width="15" height="11" fill="#151515"/><rect x="66" y="40" width="15" height="11" fill="#151515"/></svg>`,
-gpu:`<svg viewBox="0 0 120 90"><rect x="18" y="28" width="76" height="34" rx="4" fill="#273447"/><circle cx="48" cy="45" r="14" fill="#111"/><circle cx="48" cy="45" r="7" fill="#555"/><rect x="94" y="34" width="10" height="22" fill="#bbb"/></svg>`,
-storage:`<svg viewBox="0 0 120 90"><rect x="28" y="25" width="64" height="40" rx="5" fill="#292929"/><rect x="36" y="33" width="48" height="14" fill="#777"/><circle cx="45" cy="56" r="3" fill="#ddd"/></svg>`,
-psu:`<svg viewBox="0 0 120 90"><rect x="20" y="22" width="80" height="46" rx="4" fill="#d9d9d0" stroke="#555" stroke-width="3"/><circle cx="60" cy="45" r="18" fill="none" stroke="#222" stroke-width="5"/><circle cx="60" cy="45" r="6" fill="#222"/></svg>`,
-cooler:`<svg viewBox="0 0 120 90"><circle cx="60" cy="45" r="28" fill="#202020"/><circle cx="60" cy="45" r="10" fill="#177ddc"/><path d="M35 25h50M32 35h56M30 45h60M32 55h56M35 65h50" stroke="#aaa" stroke-width="4"/></svg>`,
-sata:`<svg viewBox="0 0 120 90"><path d="M20 30 C45 20,65 70,100 55" fill="none" stroke="#d22" stroke-width="8"/><rect x="13" y="23" width="22" height="18" fill="#111"/><rect x="87" y="48" width="22" height="18" fill="#111"/></svg>`,
-usb:`<svg viewBox="0 0 120 90"><path d="M20 45H100" stroke="#555" stroke-width="10"/><rect x="10" y="33" width="24" height="24" fill="#111"/><rect x="86" y="33" width="24" height="24" fill="#111"/></svg>`,
-cpuPower:`<svg viewBox="0 0 120 90"><path d="M25 22 C55 12,70 75,96 55" fill="none" stroke="#111" stroke-width="7"/><path d="M25 36 C55 26,70 89,96 69" fill="none" stroke="#d6c12d" stroke-width="7"/><rect x="14" y="18" width="24" height="28" fill="#222"/><rect x="86" y="48" width="24" height="28" fill="#222"/></svg>`,
-moboPower:`<svg viewBox="0 0 120 90"><path d="M20 20 C55 10,60 80,100 60" fill="none" stroke="#111" stroke-width="6"/><path d="M20 32 C55 22,60 92,100 72" fill="none" stroke="#d22" stroke-width="6"/><path d="M20 44 C55 34,60 104,100 84" fill="none" stroke="#d6c12d" stroke-width="6"/><rect x="12" y="15" width="26" height="42" fill="#222"/><rect x="89" y="51" width="22" height="34" fill="#222"/></svg>`,
-};
-const components = [
-  {id:"motherboard", name:"Motherboard", desc:"Main circuit board. Install this first.", realistic:svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 470 390"><rect width="470" height="390" rx="8" fill="#111b18" stroke="#777" stroke-width="4"/><path d="M20 60H140V25M35 230H330V155M105 335V250M365 38V320" stroke="#8c9892" stroke-width="2" opacity=".5"/><rect x="146" y="96" width="98" height="98" rx="8" fill="#d8d0b0" stroke="#777" stroke-width="4"/><rect x="161" y="111" width="68" height="68" fill="#24352d"/><rect x="279" y="40" width="15" height="270" fill="#161616" stroke="#aaa" stroke-width="2"/><rect x="302" y="40" width="15" height="270" fill="#161616" stroke="#aaa" stroke-width="2"/><rect x="325" y="40" width="15" height="270" fill="#161616" stroke="#aaa" stroke-width="2"/><rect x="348" y="40" width="15" height="270" fill="#161616" stroke="#aaa" stroke-width="2"/><rect x="72" y="270" width="310" height="24" rx="4" fill="#111" stroke="#999" stroke-width="2"/><rect x="12" y="28" width="72" height="190" fill="#d7d7d0" stroke="#777" stroke-width="3"/></svg>`)},
-  {id:"cpu", name:"CPU", desc:"Processor installed into the CPU socket.", realistic:svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="12" y="12" width="76" height="76" rx="7" fill="#c7c0a6" stroke="#666" stroke-width="4"/><rect x="28" y="28" width="44" height="44" rx="4" fill="#333"/><text x="50" y="55" text-anchor="middle" fill="#ddd" font-family="Arial" font-size="12">CPU</text></svg>`)},
-  {id:"ram", name:"RAM", desc:"Temporary memory. It installs vertically into the DIMM slots.", realistic:svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 270"><rect x="9" y="8" width="52" height="250" rx="5" fill="#0c7a4a" stroke="#06452a" stroke-width="4"/><g fill="#d9ad30"><rect x="13" y="7" width="4" height="16"/><rect x="20" y="7" width="4" height="16"/><rect x="27" y="7" width="4" height="16"/><rect x="34" y="7" width="4" height="16"/><rect x="41" y="7" width="4" height="16"/><rect x="48" y="7" width="4" height="16"/><rect x="55" y="7" width="4" height="16"/></g><g fill="#1b2530"><rect x="17" y="44" width="36" height="24" rx="3"/><rect x="17" y="82" width="36" height="24" rx="3"/><rect x="17" y="120" width="36" height="24" rx="3"/><rect x="17" y="158" width="36" height="24" rx="3"/><rect x="17" y="196" width="36" height="24" rx="3"/></g><g stroke="#8ed2ae" stroke-width="1" opacity=".7"><path d="M13 32H57M13 238H57M22 32V235M48 32V235"/></g><circle cx="15" cy="30" r="4" fill="#eee"/><circle cx="55" cy="238" r="4" fill="#eee"/><path d="M9 122h-5v25h5M61 122h5v25h-5" fill="#0c7a4a"/></svg>`)},
-  {id:"gpu", name:"Graphics Card", desc:"Expansion card installed horizontally into PCIe x16.", realistic:svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 75"><rect x="18" y="8" width="240" height="52" rx="6" fill="#283245" stroke="#111" stroke-width="4"/><circle cx="96" cy="34" r="22" fill="#0c0c0c"/><circle cx="96" cy="34" r="10" fill="#555"/><path d="M66 34h60M96 7v56" stroke="#777" stroke-width="4"/><rect x="258" y="16" width="24" height="34" fill="#c9c9c9"/><rect x="48" y="60" width="160" height="8" fill="#c99b22"/></svg>`)},
-  {id:"storage", name:"SSD / Drive", desc:"Storage device installed in the drive bay.", realistic:svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 105"><rect x="18" y="20" width="150" height="70" rx="8" fill="#222" stroke="#777" stroke-width="4"/><rect x="36" y="34" width="114" height="28" rx="3" fill="#6d6d6d"/><text x="93" y="54" text-anchor="middle" font-size="18" fill="#eee" font-family="Arial">SSD</text><circle cx="42" cy="76" r="4" fill="#ddd"/><circle cx="145" cy="76" r="4" fill="#ddd"/></svg>`)},
-  {id:"psu", name:"Power Supply", desc:"Installs below the motherboard and supplies power.", realistic:svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 115"><rect x="16" y="18" width="170" height="78" rx="6" fill="#d8d8d0" stroke="#555" stroke-width="4"/><circle cx="78" cy="57" r="31" fill="#222"/><circle cx="78" cy="57" r="10" fill="#777"/><path d="M48 57h60M78 27v60M56 35l44 44M100 35L56 79" stroke="#999" stroke-width="4"/><rect x="152" y="38" width="22" height="20" fill="#111"/><rect x="152" y="66" width="22" height="10" fill="#a22"/></svg>`)},
-  {id:"cooler", name:"CPU Fan / Cooler", desc:"Mounts above the CPU location to cool the processor.", realistic:svgData(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 130"><rect x="18" y="18" width="94" height="94" rx="10" fill="#333" stroke="#999" stroke-width="4"/><circle cx="65" cy="65" r="36" fill="#151515"/><circle cx="65" cy="65" r="13" fill="#177ddc"/><path d="M28 40h74M28 54h74M28 68h74M28 82h74M40 28v74M54 28v74M68 28v74M82 28v74" stroke="#aaa" stroke-width="3" opacity=".75"/></svg>`)},
+function iconMotherboard(){return `<svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg" aria-label="Motherboard icon">
+  <rect x="22" y="10" width="48" height="68" rx="5" fill="#bfc0c0" stroke="#0b0b0d" stroke-width="5"/>
+  <rect x="29" y="17" width="8" height="30" rx="2" fill="#8f8f8f"/>
+  <rect x="41" y="17" width="8" height="30" rx="2" fill="#e8e8e8"/>
+  <rect x="53" y="17" width="9" height="30" rx="2" fill="#d4d4d4"/>
+  <rect x="31" y="55" width="23" height="7" rx="2" fill="#eeeeee"/>
+  <circle cx="33" cy="70" r="5" fill="#eeeeee"/>
+  <rect x="47" y="67" width="8" height="8" rx="1" fill="#8a8a8a"/>
+  <rect x="60" y="66" width="13" height="10" rx="2" fill="#9a9a9a"/>
+</svg>`}
+function iconCpu(){return `<svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg" aria-label="CPU icon">
+  <rect x="14" y="14" width="62" height="62" rx="8" fill="#0b8072" stroke="#053c36" stroke-width="5"/>
+  <rect x="24" y="18" width="42" height="54" rx="7" fill="#cfd5d2" stroke="#e7eeee" stroke-width="3"/>
+  <rect x="35" y="33" width="22" height="5" rx="2" fill="#9fa7a6"/>
+  <rect x="35" y="44" width="24" height="5" rx="2" fill="#9fa7a6"/>
+  <rect x="35" y="55" width="18" height="5" rx="2" fill="#9fa7a6"/>
+</svg>`}
+function iconRam(){return `<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" aria-label="RAM icon">
+  <rect x="18" y="30" width="84" height="34" rx="5" fill="#b9b9b9" stroke="#101010" stroke-width="5"/>
+  <rect x="18" y="30" width="84" height="9" rx="3" fill="#ffc72c"/>
+  <path d="M56 30c2 6 6 6 8 0" stroke="#101010" stroke-width="5" fill="none"/>
+  <rect x="31" y="45" width="22" height="8" rx="1" fill="#9b9b9b"/>
+  <rect x="62" y="45" width="22" height="8" rx="1" fill="#9b9b9b"/>
+</svg>`}
+function iconNvme(){return `<svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg" aria-label="NVMe M.2 icon">
+  <rect x="18" y="34" width="84" height="28" rx="4" fill="#2d3538" stroke="#090909" stroke-width="5"/>
+  <rect x="86" y="34" width="12" height="28" fill="#d2a22f"/>
+  <rect x="30" y="43" width="26" height="10" rx="1" fill="#171b1c"/>
+  <rect x="62" y="43" width="18" height="10" rx="1" fill="#171b1c"/>
+  <rect x="80" y="42" width="8" height="12" fill="#66bdb7"/>
+  <circle cx="24" cy="48" r="3" fill="#111"/>
+</svg>`}
+function iconCpuFan(){return `<svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg" aria-label="CPU fan icon">
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="45" cy="45" r="27" fill="#eeeeee" stroke="#090909" stroke-width="5"/>
+    <path d="M24 24l-8-8M66 24l8-8M24 66l-8 8M66 66l8 8" stroke="#090909" stroke-width="5"/>
+    <circle cx="45" cy="45" r="21" fill="#f8f8f8" stroke="#171717" stroke-width="3"/>
+    <path d="M45 45 C63 18 75 38 53 49 C66 68 43 75 42 51 C21 61 18 38 41 40 C34 20 56 24 45 45" fill="#111"/>
+    <path d="M45 45 C58 28 66 41 51 48 C60 59 45 65 43 49 C31 56 29 42 43 42 C38 31 52 33 45 45" fill="#ffffff"/>
+    <circle cx="45" cy="45" r="8" fill="#e6e6e6" stroke="#808080" stroke-width="2"/>
+  </g>
+</svg>`}
+function iconGpu(){return `<svg viewBox="0 0 120 90"><rect x="23" y="28" width="74" height="35" rx="3" fill="#cfcfcf" stroke="#111" stroke-width="5"/><rect x="15" y="33" width="9" height="26" fill="#f4f4f4" stroke="#111" stroke-width="3"/><circle cx="50" cy="46" r="12" fill="#f4f4f4" stroke="#111" stroke-width="3"/><path d="M50 46 C64 28 69 45 53 51 C63 64 45 66 46 51 C31 58 31 41 46 42 C39 29 56 30 50 46" fill="#111"/><circle cx="78" cy="46" r="12" fill="#f4f4f4" stroke="#111" stroke-width="3"/><path d="M78 46 C92 28 97 45 81 51 C91 64 73 66 74 51 C59 58 59 41 74 42 C67 29 84 30 78 46" fill="#111"/><circle cx="50" cy="46" r="4" fill="#ffc72c"/><circle cx="78" cy="46" r="4" fill="#ffc72c"/></svg>`}
+function iconPsu(){return `<svg viewBox="0 0 120 90"><rect x="27" y="24" width="66" height="44" rx="5" fill="#bfbfbf" stroke="#111" stroke-width="5"/><path d="M66 30 49 51h13l-8 19 22-28H63z" fill="#111"/></svg>`}
+function iconCaseFan(){return `<svg viewBox="0 0 120 90"><rect x="32" y="17" width="56" height="56" rx="5" fill="#cfcfcf" stroke="#111" stroke-width="5"/><circle cx="60" cy="45" r="23" fill="#f4f4f4" stroke="#111" stroke-width="3"/><path d="M60 45 C80 17 90 43 66 51 C78 73 51 74 55 51 C31 63 32 36 56 40 C45 17 70 19 60 45" fill="#111"/><path d="M60 45 C74 25 82 43 65 49 C73 63 55 65 57 49 C42 58 40 41 57 42 C51 28 68 29 60 45" fill="#eeeeee"/><circle cx="60" cy="45" r="8" fill="#dcdcdc"/><circle cx="36" cy="21" r="3" fill="#111"/><circle cx="84" cy="21" r="3" fill="#111"/><circle cx="36" cy="69" r="3" fill="#111"/><circle cx="84" cy="69" r="3" fill="#111"/></svg>`}
+
+const parts = [
+  ["motherboard","Motherboard",iconMotherboard()],
+  ["cpu","CPU",iconCpu()],
+  ["ram","RAM",iconRam()],
+  ["nvme","NVMe M.2",iconNvme()],
+  ["cpuFan","CPU Fan",iconCpuFan()],
+  ["gpu","GPU",iconGpu()],
+  ["psu","Power Supply",iconPsu()],
+  ["caseFan","Case Fan",iconCaseFan()]
 ];
 
-const partsList = document.getElementById("partsList");
-const guide = document.getElementById("componentGuide");
-const selectedPanel = document.getElementById("selectedPanel");
-components.forEach(item => {
-  const card = document.createElement("div");
-  card.className = "component";
-  card.innerHTML = `${simpleIcons[item.id]}<h3>${item.name}</h3><p>${item.desc}</p>`;
-  guide.appendChild(card);
-  const part = document.createElement("div");
-  part.className = "part";
-  part.draggable = true;
-  part.id = item.id;
-  part.dataset.name = item.name;
-  part.innerHTML = `<img src="${item.realistic}" alt="${item.name}"><span>${item.name}</span>`;
-  partsList.appendChild(part);
+const partsContainer = document.getElementById("parts");
+parts.forEach(([id,label,svg])=>{
+  const item = document.createElement("button");
+  item.className = "part";
+  item.id = id;
+  item.type = "button";
+  item.title = label;
+  item.dataset.draggable = "true";
+  item.innerHTML = svg;
+  partsContainer.appendChild(item);
 });
-let dragged = null;
-document.addEventListener("dragstart", e => {
-  const part = e.target.closest(".part");
-  if(!part) return;
-  dragged = part;
-  part.classList.add("dragging");
+
+
+
+
+
+/* Stable free-drag panel engine.
+   The panel stays inside .workspace at all times, so the case and panel share the same coordinate system. */
+const glassPanel = document.getElementById("glassPanel");
+const glassDropZone = document.getElementById("glassDropZone");
+const workspace = document.querySelector(".workspace");
+
+let movingPanel = false;
+let panelOffsetX = 0;
+let panelOffsetY = 0;
+let panelRectAtStart = null;
+
+function panelPointerDown(event){
+  if(event.button !== undefined && event.button !== 0) return;
+
+  const workspaceRect = workspace.getBoundingClientRect();
+  panelRectAtStart = glassPanel.getBoundingClientRect();
+
+  panelOffsetX = event.clientX - panelRectAtStart.left;
+  panelOffsetY = event.clientY - panelRectAtStart.top;
+
+  // Convert current visual position to workspace-local absolute coordinates before dragging.
+  glassPanel.classList.remove("on-case","removed","free-placed","correct-flash");
+  glassPanel.classList.add("is-moving");
+
+  glassPanel.style.left = (panelRectAtStart.left - workspaceRect.left) + "px";
+  glassPanel.style.top = (panelRectAtStart.top - workspaceRect.top) + "px";
+  glassPanel.style.width="570px";
+  glassPanel.style.height="560px";
+
   document.body.classList.add("drag-active");
-  e.dataTransfer.setData("text/plain", part.id);
-  selectedPanel.textContent = "Selected Component: " + part.dataset.name;
-});
-document.addEventListener("dragend", e => {
-  const part = e.target.closest(".part");
-  if(part) part.classList.remove("dragging");
+  movingPanel = true;
+
+  window.addEventListener("pointermove", panelPointerMove);
+  window.addEventListener("pointerup", panelPointerUp, {once:true});
+  event.preventDefault();
+}
+
+function panelPointerMove(event){
+  if(!movingPanel) return;
+  movePanel(event.clientX, event.clientY);
+
+  const overCase = pointerInside(event.clientX, event.clientY, glassDropZone);
+  glassDropZone.classList.toggle("drop-zone-hover", overCase);
+}
+
+function movePanel(clientX, clientY){
+  const workspaceRect = workspace.getBoundingClientRect();
+  glassPanel.style.left = (clientX - workspaceRect.left - panelOffsetX) + "px";
+  glassPanel.style.top = (clientY - workspaceRect.top - panelOffsetY) + "px";
+}
+
+function panelPointerUp(event){
+  movingPanel = false;
+  window.removeEventListener("pointermove", panelPointerMove);
   document.body.classList.remove("drag-active");
-  document.querySelectorAll(".zone,.drop-bin").forEach(z => z.classList.remove("drag-over"));
-});
-document.querySelectorAll(".zone,.drop-bin").forEach(zone => {
-  zone.addEventListener("dragover", e => { e.preventDefault(); zone.classList.add("drag-over"); });
-  zone.addEventListener("dragleave", () => zone.classList.remove("drag-over"));
-  zone.addEventListener("drop", e => {
-    e.preventDefault();
-    zone.classList.remove("drag-over");
-    if(!dragged) return;
-    if(zone.classList.contains("zone")){
-      const existing = zone.querySelector(".part");
-      if(existing && existing !== dragged) partsList.appendChild(existing);
-    }
-    zone.appendChild(dragged);
-    if(dragged.id === "motherboard") revealMotherboardSlots();
-    
-    turnOffComputer();
-  });
-});
-function revealMotherboardSlots(){
-  const boardZone = document.querySelector('.case-board-zone');
-  const boardPart = boardZone.querySelector('.part');
-  if(boardPart && boardPart.id === "motherboard"){
-    document.getElementById("installedBoard").classList.add("installed");
-    boardPart.style.display = "none";
-    document.querySelectorAll(".zone").forEach(z => {
-      if(!z.classList.contains("case-board-zone") && !z.classList.contains("power-dependent")) z.classList.add("available");
-    });
+  glassDropZone.classList.remove("drop-zone-hover");
+
+  const overCase = pointerInside(event.clientX, event.clientY, glassDropZone);
+  glassPanel.classList.remove("is-moving");
+
+  if(overCase){
+    closePanel();
+  }else{
+    leavePanelWhereDropped(event.clientX, event.clientY);
   }
 }
-function motherboardInstalled(){
-  const boardPart = document.querySelector('.case-board-zone .part');
-  return boardPart && boardPart.id === "motherboard";
+
+function pointerInside(clientX, clientY, element){
+  const rect = element.getBoundingClientRect();
+  return clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom;
 }
-function allCorrect(){
-  if(!motherboardInstalled()) return false;
-  let ok = true;
-  document.querySelectorAll(".zone").forEach(zone => {
-    if(!zone.classList.contains("available")) return;
-    const placed = zone.querySelector(".part");
-    if(!placed || placed.id !== zone.dataset.answer) ok = false;
-  });
-  return ok;
+
+function closePanel(){
+  // Remove inline drag coordinates so CSS controls exact closed-case alignment.
+  glassPanel.style.left = "";
+  glassPanel.style.top = "";
+  glassPanel.style.width = "";
+  glassPanel.style.height = "";
+  glassPanel.classList.remove("free-placed","removed","is-moving");
+  glassPanel.classList.add("on-case","correct-flash");
+  setTimeout(() => glassPanel.classList.remove("correct-flash"), 450);
+  refreshPartLocks();
+  refreshM2SlotOverlay();
 }
-function gradeBuild(){
-  
-  let score = 0;
-  let total = 0;
-  document.querySelectorAll(".zone").forEach(zone => {
-    zone.classList.remove("correct","incorrect");
-    if(!zone.classList.contains("available")) return;
-    total++;
-    const placed = zone.querySelector(".part");
-    if(placed && placed.id === zone.dataset.answer){
-      score++;
-      zone.classList.add("correct");
-    }else{
-      zone.classList.add("incorrect");
-    }
-  });
-  const feedback = document.getElementById("feedback");
-  const percent = total ? Math.round(score/total*100) : 0;
-  if(!motherboardInstalled()){
-    feedback.textContent = "Install the motherboard first. Internal motherboard targets appear after placement.";
+
+function leavePanelWhereDropped(clientX, clientY){
+  movePanel(clientX, clientY);
+  glassPanel.classList.remove("on-case","correct-flash","is-moving");
+  glassPanel.classList.add("free-placed","removed");
+  refreshPartLocks();
+  refreshM2SlotOverlay();
+}
+
+glassPanel.addEventListener("pointerdown", panelPointerDown);
+
+
+
+/* Motherboard-only install step. The component is SVG/CSS, not an image. */
+const motherboardSVG = `<svg viewBox="0 0 248 283" xmlns="http://www.w3.org/2000/svg" aria-label="Motherboard">
+  <defs>
+    <linearGradient id="mbBaseV40" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#4d5052"/>
+      <stop offset=".45" stop-color="#2c2f31"/>
+      <stop offset="1" stop-color="#151718"/>
+    </linearGradient>
+    <linearGradient id="mbMetalV40" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#f2f2f2"/>
+      <stop offset=".5" stop-color="#b9b9b9"/>
+      <stop offset="1" stop-color="#6f7376"/>
+    </linearGradient>
+    <linearGradient id="mbDarkMetalV40" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#6a6d6e"/>
+      <stop offset="1" stop-color="#303335"/>
+    </linearGradient>
+    <filter id="mbDropV40" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#000" flood-opacity=".45"/>
+    </filter>
+  </defs>
+
+  <rect x="3" y="3" width="242" height="277" rx="5" fill="url(#mbBaseV40)" stroke="#0a0a0b" stroke-width="5" filter="url(#mbDropV40)"/>
+
+  <!-- board screws -->
+  <g fill="#222528" stroke="#8a8f92" stroke-width="1">
+    <circle cx="17" cy="17" r="4"/>
+    <circle cx="232" cy="17" r="4"/>
+    <circle cx="17" cy="264" r="4"/>
+    <circle cx="232" cy="264" r="4"/>
+  </g>
+
+  <!-- rear I/O stack -->
+  <g stroke="#5b5f61" stroke-width="1.2">
+    <rect x="8" y="12" width="28" height="21" fill="url(#mbMetalV40)"/>
+    <rect x="8" y="46" width="20" height="22" fill="url(#mbMetalV40)"/>
+    <rect x="8" y="81" width="30" height="22" fill="url(#mbMetalV40)"/>
+    <rect x="8" y="119" width="38" height="29" fill="url(#mbMetalV40)"/>
+    <rect x="8" y="166" width="29" height="21" fill="url(#mbMetalV40)"/>
+  </g>
+
+  <!-- top headers and ports -->
+  <g fill="#151719" stroke="#7a7d80" stroke-width="1">
+    <rect x="49" y="13" width="20" height="8" rx="2"/>
+    <circle cx="75" cy="17" r="4" fill="#c5c5c5"/>
+    <rect x="84" y="13" width="26" height="8" rx="2"/>
+    <circle cx="117" cy="17" r="4" fill="#c5c5c5"/>
+    <rect x="160" y="12" width="13" height="8" rx="1"/>
+  </g>
+
+  <!-- VRM blocks -->
+  <g fill="#56595b" stroke="#171819" stroke-width="1.1">
+    <rect x="62" y="29" width="15" height="14" rx="1"/>
+    <rect x="82" y="29" width="15" height="14" rx="1"/>
+    <rect x="102" y="29" width="15" height="14" rx="1"/>
+    <rect x="53" y="51" width="15" height="18" rx="1"/>
+    <rect x="73" y="51" width="15" height="18" rx="1"/>
+    <rect x="93" y="51" width="15" height="18" rx="1"/>
+    <rect x="53" y="77" width="15" height="22" rx="1"/>
+    <rect x="75" y="77" width="15" height="22" rx="1"/>
+    <rect x="97" y="77" width="15" height="22" rx="1"/>
+    <rect x="53" y="106" width="15" height="22" rx="1"/>
+    <rect x="75" y="106" width="15" height="22" rx="1"/>
+  </g>
+
+  <!-- capacitors near VRM and CPU -->
+  <g fill="#c9c9c9" stroke="#55595b" stroke-width="1">
+    <circle cx="96" cy="132" r="4"/>
+    <circle cx="112" cy="132" r="4"/>
+    <circle cx="130" cy="148" r="4"/>
+    <circle cx="160" cy="126" r="4"/>
+    <circle cx="50" cy="132" r="3.5"/>
+    <circle cx="67" cy="132" r="3.5"/>
+    <circle cx="82" cy="132" r="3.5"/>
+    <circle cx="75" cy="146" r="4"/>
+    <circle cx="98" cy="146" r="4"/>
+  </g>
+
+  <!-- CPU socket -->
+  <g>
+    <rect x="116" y="79" width="63" height="63" rx="5" fill="url(#mbMetalV40)" stroke="#4b4f51" stroke-width="4"/>
+    <rect x="131" y="94" width="33" height="33" rx="3" fill="#151617" stroke="#d8d8d8" stroke-width="1"/>
+    <g fill="#c28f1d">
+      <circle cx="139" cy="102" r="1.1"/><circle cx="147" cy="102" r="1.1"/><circle cx="155" cy="102" r="1.1"/>
+      <circle cx="139" cy="110" r="1.1"/><circle cx="147" cy="110" r="1.1"/><circle cx="155" cy="110" r="1.1"/>
+      <circle cx="139" cy="118" r="1.1"/><circle cx="147" cy="118" r="1.1"/><circle cx="155" cy="118" r="1.1"/>
+    </g>
+  </g>
+
+  <!-- RAM slots -->
+  <g>
+    <rect x="196" y="34" width="8" height="113" rx="2" fill="#151719" stroke="#e0e0e0" stroke-width="2"/>
+    <rect x="210" y="34" width="8" height="113" rx="2" fill="#151719" stroke="#e0e0e0" stroke-width="2"/>
+    <rect x="192" y="27" width="8" height="8" fill="#e0e0e0"/>
+    <rect x="214" y="27" width="8" height="8" fill="#e0e0e0"/>
+    <rect x="192" y="147" width="8" height="8" fill="#e0e0e0"/>
+    <rect x="214" y="147" width="8" height="8" fill="#e0e0e0"/>
+  </g>
+
+  <!-- right side connectors -->
+  <g fill="#17191a" stroke="#777c7f" stroke-width="1">
+    <rect x="224" y="66" width="14" height="68"/>
+    <g fill="#b6b6b6">
+      <rect x="227" y="71" width="2" height="4"/><rect x="232" y="71" width="2" height="4"/>
+      <rect x="227" y="80" width="2" height="4"/><rect x="232" y="80" width="2" height="4"/>
+      <rect x="227" y="89" width="2" height="4"/><rect x="232" y="89" width="2" height="4"/>
+      <rect x="227" y="98" width="2" height="4"/><rect x="232" y="98" width="2" height="4"/>
+      <rect x="227" y="107" width="2" height="4"/><rect x="232" y="107" width="2" height="4"/>
+      <rect x="227" y="116" width="2" height="4"/><rect x="232" y="116" width="2" height="4"/>
+    </g>
+    <rect x="229" y="147" width="8" height="41" rx="1"/>
+  </g>
+
+  <!-- PCIe x16 and M.2 -->
+  <g>
+    <rect x="62" y="158" width="126" height="9" rx="2" fill="#111315" stroke="#eeeeee" stroke-width="2"/>
+    <rect x="174" y="164" width="25" height="10" fill="#d7d7d7" stroke="#777" stroke-width="1"/>
+    <!-- Empty M.2 connector -->
+    <rect x="73" y="208" width="84" height="10" rx="2" fill="#ffffff" stroke="#8b8b8b" stroke-width="1.5"/>
+    <rect x="82" y="211" width="56" height="4" rx="1.5" fill="#d7d7d7"/>
+    <rect x="149" y="205" width="14" height="16" rx="1" fill="#ececec" stroke="#666666" stroke-width="1"/>
+    <circle cx="68" cy="213" r="3.5" fill="#f1f1f1" stroke="#666666" stroke-width="1"/>
+  </g>
+
+  <!-- lower board components -->
+  <g>
+    <circle cx="50" cy="206" r="13" fill="#c9c9c9" stroke="#55595b" stroke-width="1"/>
+    <rect x="61" y="236" width="40" height="8" rx="1" fill="#111315" stroke="#b5b5b5" stroke-width="1"/>
+    <rect x="91" y="220" width="17" height="17" rx="2" fill="#141618" stroke="#757575" stroke-width="1"/>
+    <rect x="121" y="243" width="18" height="18" rx="2" fill="#141618" stroke="#757575" stroke-width="1"/>
+    <rect x="176" y="210" width="43" height="43" rx="2" fill="#111315" stroke="#5d5d5d" stroke-width="1.5"/>
+    <g fill="#c6c6c6" stroke="#535353" stroke-width="1">
+      <circle cx="47" cy="236" r="4"/>
+      <circle cx="59" cy="236" r="4"/>
+      <circle cx="224" cy="200" r="4"/>
+      <circle cx="224" cy="214" r="4"/>
+    </g>
+  </g>
+
+  <!-- bottom headers and SATA -->
+  <g fill="#151719" stroke="#777" stroke-width="1">
+    <rect x="24" y="258" width="24" height="8" rx="1"/>
+    <rect x="53" y="258" width="24" height="8" rx="1"/>
+    <rect x="92" y="264" width="17" height="7" rx="1"/>
+    <rect x="119" y="264" width="17" height="7" rx="1"/>
+    <rect x="156" y="265" width="18" height="8" rx="2"/>
+    <rect x="181" y="265" width="18" height="8" rx="2"/>
+    <rect x="206" y="265" width="18" height="8" rx="2"/>
+    <rect x="226" y="244" width="8" height="20" rx="2"/>
+  </g>
+
+  <!-- traces and tiny details -->
+  <g stroke="#74797b" stroke-width=".75" opacity=".42">
+    <path d="M42 33h112M45 56h92M46 154h175M47 178h170M36 272h190"/>
+    <path d="M190 26v236M155 23v55M219 23v230"/>
+    <path d="M58 226h80M58 247h96"/>
+  </g>
+  <g stroke="#d1a328" stroke-width="1" opacity=".82">
+    <path d="M134 28h12M151 28h12M169 28h12"/>
+    <path d="M71 147h12M93 147h12M115 153h10M153 229h10"/>
+  </g>
+  <g fill="#c6c6c6">
+    <circle cx="35" cy="221" r="3"/>
+    <circle cx="48" cy="221" r="3"/>
+    <circle cx="62" cy="221" r="3"/>
+    <circle cx="44" cy="253" r="2"/>
+    <circle cx="55" cy="253" r="2"/>
+    <circle cx="66" cy="253" r="2"/>
+  </g>
+</svg>`;
+
+const motherboardIcon = document.getElementById("motherboard");
+const motherboardTarget = document.getElementById("motherboardTarget");
+let motherboardElement = null;
+let activeMotherboard = null;
+let mbOffsetX = 0;
+let mbOffsetY = 0;
+
+function lockNonMotherboardParts(){
+  refreshPartLocks();
+  refreshM2SlotOverlay();
+}
+
+function createMotherboard(clientX, clientY){
+  if(!isGlassRemoved()) return;
+  if(motherboardElement){
+    beginMotherboardDrag(motherboardElement, clientX, clientY, true);
     return;
   }
-  feedback.textContent = `Score: ${score}/${total} (${percent}%). ${score === total ? "Build is ready for power testing." : "Some parts are not installed correctly."}`;
+
+  const workspaceRect = workspace.getBoundingClientRect();
+  const board = document.createElement("div");
+  board.className = "workspace-motherboard";
+  board.innerHTML = motherboardSVG;
+  board.style.left = (clientX - workspaceRect.left - 114) + "px";
+  board.style.top = (clientY - workspaceRect.top - 136) + "px";
+
+  workspace.appendChild(board);
+  motherboardElement = board;
+  motherboardIcon.classList.add("source-used");
+
+  board.addEventListener("pointerdown", event => {
+    beginMotherboardDrag(board, event.clientX, event.clientY, false);
+    event.preventDefault();
+  });
+
+  beginMotherboardDrag(board, clientX, clientY, true);
 }
-function resetLab(){
+
+function beginMotherboardDrag(board, clientX, clientY, fromShelf){
+  const rect = board.getBoundingClientRect();
+  activeMotherboard = board;
+  board.classList.remove("placed");
+  board.classList.add("dragging-live");
+
+  mbOffsetX = fromShelf ? rect.width / 2 : clientX - rect.left;
+  mbOffsetY = fromShelf ? rect.height / 2 : clientY - rect.top;
+
+  moveMotherboard(clientX, clientY);
+  window.addEventListener("pointermove", moveMotherboardLive);
+  window.addEventListener("pointerup", releaseMotherboard, {once:true});
+}
+
+function moveMotherboard(clientX, clientY){
+  const workspaceRect = workspace.getBoundingClientRect();
+  activeMotherboard.style.left = (clientX - workspaceRect.left - mbOffsetX) + "px";
+  activeMotherboard.style.top = (clientY - workspaceRect.top - mbOffsetY) + "px";
+}
+
+function moveMotherboardLive(event){
+  if(!activeMotherboard) return;
+  moveMotherboard(event.clientX, event.clientY);
+  activeMotherboard.classList.toggle("near-target", pointerInside(event.clientX, event.clientY, motherboardTarget));
+}
+
+function releaseMotherboard(event){
+  if(!activeMotherboard) return;
+
+  const workspaceRect = workspace.getBoundingClientRect();
+  const targetRect = motherboardTarget.getBoundingClientRect();
+  const overTarget = pointerInside(event.clientX, event.clientY, motherboardTarget);
+  const overShelf = event.clientY >= workspaceRect.bottom;
+
+  activeMotherboard.classList.remove("dragging-live","near-target");
+
+  if(overShelf){
+    activeMotherboard.remove();
+    motherboardElement = null;
+    motherboardIcon.classList.remove("source-used");
+    refreshPartLocks();
+  refreshM2SlotOverlay();
+  }else if(overTarget){
+    activeMotherboard.style.left = (targetRect.left - workspaceRect.left) + "px";
+    activeMotherboard.style.top = (targetRect.top - workspaceRect.top) + "px";
+    activeMotherboard.classList.add("placed");
+    refreshPartLocks();
+  refreshM2SlotOverlay();
+  }
+
+  window.removeEventListener("pointermove", moveMotherboardLive);
+  activeMotherboard = null;
+}
+
+motherboardIcon.addEventListener("pointerdown", event => {
+  createMotherboard(event.clientX, event.clientY);
+  event.preventDefault();
+});
+
+lockNonMotherboardParts();
+
+
+/* CPU install step. Unlocked after motherboard is snapped into place. */
+const cpuSVG = `<svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg" aria-label="CPU">
+  <defs>
+    <linearGradient id="cpuTopV25" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#edf1ef"/>
+      <stop offset=".55" stop-color="#bfc8c7"/>
+      <stop offset="1" stop-color="#7f8c8b"/>
+    </linearGradient>
+    <filter id="cpuDropV25" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#000" flood-opacity=".45"/>
+    </filter>
+  </defs>
+  <rect x="10" y="10" width="70" height="70" rx="8" fill="#078575" stroke="#053b35" stroke-width="5" filter="url(#cpuDropV25)"/>
+  <rect x="22" y="16" width="46" height="58" rx="7" fill="url(#cpuTopV25)" stroke="#dce9e7" stroke-width="3"/>
+  <rect x="35" y="32" width="22" height="5" rx="2" fill="#9ea7a6"/>
+  <rect x="35" y="43" width="25" height="5" rx="2" fill="#9ea7a6"/>
+  <rect x="35" y="54" width="18" height="5" rx="2" fill="#9ea7a6"/>
+</svg>`;
+
+const cpuInstalledSVG = `<svg viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg" aria-label="Installed CPU">
+  <defs>
+    <linearGradient id="installedCpuFill" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#f0f3f1"/>
+      <stop offset=".55" stop-color="#c8d0cf"/>
+      <stop offset="1" stop-color="#8b9897"/>
+    </linearGradient>
+  </defs>
+  <rect x="1" y="1" width="52" height="52" rx="7" fill="url(#installedCpuFill)" stroke="#e9f0ef" stroke-width="3"/>
+  <rect x="16" y="17" width="22" height="4" rx="2" fill="#9ba4a3"/>
+  <rect x="16" y="26" width="24" height="4" rx="2" fill="#9ba4a3"/>
+  <rect x="16" y="35" width="17" height="4" rx="2" fill="#9ba4a3"/>
+</svg>`;
+
+const cpuIcon = document.getElementById("cpu");
+const cpuTarget = document.getElementById("cpuTarget");
+let cpuElement = null;
+let activeCpu = null;
+let cpuOffsetX = 0;
+let cpuOffsetY = 0;
+
+function unlockCpuIfReady(){
+  refreshPartLocks();
+  refreshM2SlotOverlay();
+}
+
+function createCpu(clientX, clientY){
+  if(!isGlassRemoved() || !isMotherboardInstalled()) return;
+
+  if(cpuElement){
+    beginCpuDrag(cpuElement, clientX, clientY, true);
+    return;
+  }
+
+  const workspaceRect = workspace.getBoundingClientRect();
+  const cpu = document.createElement("div");
+  cpu.className = "workspace-cpu";
+  cpu.id = "workspaceCpu";
+  cpu.innerHTML = cpuSVG;
+  cpu.style.left = (clientX - workspaceRect.left - 36) + "px";
+  cpu.style.top = (clientY - workspaceRect.top - 36) + "px";
+
+  workspace.appendChild(cpu);
+  cpuElement = cpu;
+  cpuIcon.classList.add("source-used");
+
+  cpu.addEventListener("pointerdown", event => {
+    beginCpuDrag(cpu, event.clientX, event.clientY, false);
+    event.preventDefault();
+  });
+
+  beginCpuDrag(cpu, clientX, clientY, true);
+}
+
+function beginCpuDrag(cpu, clientX, clientY, fromShelf){
+  const rect = cpu.getBoundingClientRect();
+  activeCpu = cpu;
+  cpu.classList.remove("placed");
+  if(cpu.innerHTML !== cpuSVG) cpu.innerHTML = cpuSVG;
+  cpu.style.width = "72px";
+  cpu.style.height = "72px";
+  cpu.classList.add("dragging-live");
+
+  cpuOffsetX = fromShelf ? rect.width / 2 : clientX - rect.left;
+  cpuOffsetY = fromShelf ? rect.height / 2 : clientY - rect.top;
+
+  moveCpu(clientX, clientY);
+  window.addEventListener("pointermove", moveCpuLive);
+  window.addEventListener("pointerup", releaseCpu, {once:true});
+}
+
+function moveCpu(clientX, clientY){
+  const workspaceRect = workspace.getBoundingClientRect();
+  activeCpu.style.left = (clientX - workspaceRect.left - cpuOffsetX) + "px";
+  activeCpu.style.top = (clientY - workspaceRect.top - cpuOffsetY) + "px";
+}
+
+function moveCpuLive(event){
+  if(!activeCpu) return;
+  moveCpu(event.clientX, event.clientY);
+  activeCpu.classList.toggle("near-target", pointerInside(event.clientX, event.clientY, cpuTarget));
+}
+
+function releaseCpu(event){
+  if(!activeCpu) return;
+
+  const workspaceRect = workspace.getBoundingClientRect();
+  const targetRect = cpuTarget.getBoundingClientRect();
+  const overTarget = pointerInside(event.clientX, event.clientY, cpuTarget);
+  const overShelf = event.clientY >= workspaceRect.bottom;
+
+  activeCpu.classList.remove("dragging-live","near-target");
+
+  if(overShelf){
+    activeCpu.remove();
+    cpuElement = null;
+    cpuIcon.classList.remove("source-used");
+    refreshPartLocks();
+  refreshM2SlotOverlay();
+  }else if(overTarget){
+    activeCpu.innerHTML = cpuInstalledSVG;
+    activeCpu.style.width = "48px";
+    activeCpu.style.height = "48px";
+    activeCpu.style.left = (targetRect.left - workspaceRect.left) + "px";
+    activeCpu.style.top = (targetRect.top - workspaceRect.top) + "px";
+    activeCpu.classList.add("placed");
+    refreshPartLocks();
+  refreshM2SlotOverlay();
+  }
+
+  window.removeEventListener("pointermove", moveCpuLive);
+  activeCpu = null;
+}
+
+cpuIcon.addEventListener("pointerdown", event => {
+  createCpu(event.clientX, event.clientY);
+  event.preventDefault();
+});
+
+
+/* CPU fan install step. SVG/CSS only, one CPU fan at a time. */
+const cpuFanSVG = `<svg viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg" aria-label="CPU fan">
+  <defs>
+    <radialGradient id="fanPlateV30" cx="50%" cy="45%" r="65%">
+      <stop stop-color="#ffffff"/>
+      <stop offset=".42" stop-color="#d8d8d8"/>
+      <stop offset="1" stop-color="#828282"/>
+    </radialGradient>
+    <linearGradient id="fanBladeV30" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#fafafa"/>
+      <stop offset="1" stop-color="#a6a6a6"/>
+    </linearGradient>
+    <filter id="fanShadowV30" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="7" stdDeviation="5" flood-color="#000" flood-opacity=".55"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#fanShadowV30)">
+    <g fill="#2a2b2d" stroke="#101010" stroke-width="3">
+      <path d="M21 15l13 5 7 14-14 7-14-14z"/>
+      <path d="M119 15l-13 5-7 14 14 7 14-14z"/>
+      <path d="M21 125l13-5 7-14-14-7-14 14z"/>
+      <path d="M119 125l-13-5-7-14 14-7 14 14z"/>
+    </g>
+
+    <circle cx="70" cy="70" r="56" fill="url(#fanPlateV30)" stroke="#101010" stroke-width="5"/>
+    <circle cx="70" cy="70" r="49" fill="#151515" stroke="#bdbdbd" stroke-width="3"/>
+    <circle cx="70" cy="70" r="43" fill="#101010"/>
+
+    <g fill="none" stroke="#d9d9d9" stroke-width="2" opacity=".92">
+      <circle cx="70" cy="70" r="36"/>
+      <circle cx="70" cy="70" r="30"/>
+      <circle cx="70" cy="70" r="24"/>
+    </g>
+
+    <g stroke="#dddddd" stroke-width="1.2" opacity=".9">
+      <line x1="70" y1="28" x2="70" y2="112"/>
+      <line x1="50" y1="33" x2="90" y2="107"/>
+      <line x1="33" y1="50" x2="107" y2="90"/>
+      <line x1="28" y1="70" x2="112" y2="70"/>
+      <line x1="33" y1="90" x2="107" y2="50"/>
+      <line x1="50" y1="107" x2="90" y2="33"/>
+    </g>
+
+    <path d="M70 70 C111 23 126 65 82 82 C103 122 58 129 61 83 C19 102 19 59 62 62 C40 20 90 20 70 70"
+          fill="url(#fanBladeV30)" stroke="#0c0c0c" stroke-width="2.5"/>
+    <circle cx="70" cy="70" r="19" fill="#f0f0f0" stroke="#b7b7b7" stroke-width="4"/>
+    <circle cx="70" cy="70" r="10" fill="#d9d9d9"/>
+  </g>
+</svg>`;
+
+const cpuFanInstalledSVG = cpuFanSVG;
+
+const cpuFanIcon = document.getElementById("cpuFan");
+const cpuFanTarget = document.getElementById("cpuFanTarget");
+let cpuFanElement = null;
+let activeCpuFan = null;
+let cpuFanOffsetX = 0;
+let cpuFanOffsetY = 0;
+
+/* Placement rules:
+   1. Glass panel must be removed before any internal part can be placed.
+   2. Motherboard must be installed first.
+   3. CPU fan requires CPU first.
+   4. Other internal components may be placed after motherboard is installed.
+*/
+function isGlassRemoved(){
+  return !glassPanel.classList.contains("on-case");
+}
+
+function isMotherboardInstalled(){
+  return motherboardElement && motherboardElement.classList.contains("placed");
+}
+
+function isCpuInstalled(){
+  return cpuElement && cpuElement.classList.contains("placed");
+}
+
+
+/* Keep the visible M.2 slot on top of the motherboard until NVMe is installed. */
+const m2SlotOverlay = document.getElementById("m2SlotOverlay");
+function refreshM2SlotOverlay(){
+  if(!m2SlotOverlay) return;
+  const shouldShow = isMotherboardInstalled() && !(nvmeElement && nvmeElement.classList.contains("placed"));
+  m2SlotOverlay.classList.toggle("show", shouldShow);
+}
+
+function refreshPartLocks(){
   document.querySelectorAll(".part").forEach(part => {
-    part.style.display = "";
-    partsList.appendChild(part);
+    part.classList.add("locked-for-step");
+    part.classList.remove("unlocked-part");
   });
-  document.querySelectorAll(".zone").forEach(zone => {
-    zone.classList.remove("correct","incorrect","drag-over","available");
-  });
-  document.querySelector(".case-board-zone").classList.add("available");
-  document.getElementById("installedBoard").classList.remove("installed");
-  document.getElementById("caseStage").classList.remove("psu-installed");
-  document.getElementById("feedback").textContent = "";
-  selectedPanel.textContent = "Selected Component: none";
-  turnOffComputer();
-  setView("motherboard");
-}
-function setView(view){
-  const stage = document.getElementById("caseStage");
-  stage.classList.remove("view-motherboard","view-front","view-back","view-drive");
-  stage.classList.add("view-" + view);
-  document.querySelectorAll(".tab").forEach(btn => btn.classList.toggle("active", btn.dataset.view === view));
-}
-let pcPowered = false;
-let monitorPowered = false;
 
-function turnOnComputer(){
-  
-  pcPowered = true;
-  updatePowerState();
-}
+  if(isGlassRemoved()){
+    motherboardIcon.classList.remove("locked-for-step");
+    motherboardIcon.classList.add("unlocked-part");
+  }
 
-function toggleMonitor(){
-  monitorPowered = !monitorPowered;
-  updatePowerState();
-}
+  if(isGlassRemoved() && isMotherboardInstalled()){
+    ["cpu","ram","nvme","gpu","psu","caseFan"].forEach(id => {
+      const part = document.getElementById(id);
+      if(part){
+        part.classList.remove("locked-for-step");
+        part.classList.add("unlocked-part");
+      }
+    });
+  }
 
-function updatePowerState(){
-  const monitor = document.getElementById("monitorWrap");
-  const status = document.getElementById("powerStatus");
-  monitor.classList.toggle("monitor-on", monitorPowered);
-  monitor.classList.toggle("pc-on", monitorPowered && pcPowered && allCorrect());
-  monitor.classList.toggle("no-pc", monitorPowered && (!pcPowered || !allCorrect()));
-
-  if(!pcPowered && !monitorPowered){
-    status.textContent = "PC: Off | Monitor: Off";
-  }else if(pcPowered && !monitorPowered){
-    status.textContent = "PC: On | Monitor: Off";
-  }else if(!pcPowered && monitorPowered){
-    status.textContent = "PC: Off | Monitor: On, no signal";
-  }else if(allCorrect()){
-    status.textContent = "PC: On | Monitor: On, Windows 11 loaded";
-    document.getElementById("feedback").textContent = "Power test passed. The PC and monitor are working.";
-  }else{
-    status.textContent = "PC: On | Monitor: On, no signal";
-    document.getElementById("feedback").textContent = "Power test failed. Check component placement and required PSU cables.";
+  if(isGlassRemoved() && isMotherboardInstalled() && isCpuInstalled()){
+    cpuFanIcon.classList.remove("locked-for-step");
+    cpuFanIcon.classList.add("unlocked-part");
   }
 }
 
-function turnOffComputer(){
-  pcPowered = false;
-  monitorPowered = false;
-  updatePowerState();
+
+function unlockCpuFanIfReady(){
+  refreshPartLocks();
+  refreshM2SlotOverlay();
 }
-function toggleTheme(){
-  const html = document.documentElement;
-  const btn = document.querySelector(".theme-btn");
-  if(html.getAttribute("data-theme") === "light"){
-    html.setAttribute("data-theme","dark");
-    btn.textContent = "Light Mode";
-  }else{
-    html.setAttribute("data-theme","light");
-    btn.textContent = "Dark Mode";
+
+function createCpuFan(clientX, clientY){
+  if(!isGlassRemoved() || !isMotherboardInstalled() || !isCpuInstalled()) return;
+  if(cpuFanElement){
+    beginCpuFanDrag(cpuFanElement, clientX, clientY, true);
+    return;
   }
+  const workspaceRect = workspace.getBoundingClientRect();
+  const fan = document.createElement("div");
+  fan.className = "workspace-cpu-fan";
+  fan.id = "workspaceCpuFan";
+  fan.innerHTML = cpuFanSVG;
+  fan.style.left = (clientX - workspaceRect.left - 56) + "px";
+  fan.style.top = (clientY - workspaceRect.top - 56) + "px";
+  workspace.appendChild(fan);
+  cpuFanElement = fan;
+  cpuFanIcon.classList.add("source-used");
+  fan.addEventListener("pointerdown", event => {
+    beginCpuFanDrag(fan, event.clientX, event.clientY, false);
+    event.preventDefault();
+  });
+  beginCpuFanDrag(fan, clientX, clientY, true);
 }
+
+function beginCpuFanDrag(fan, clientX, clientY, fromShelf){
+  const rect = fan.getBoundingClientRect();
+  activeCpuFan = fan;
+  fan.classList.remove("placed");
+  if(fan.innerHTML !== cpuFanSVG) fan.innerHTML = cpuFanSVG;
+  fan.style.width = "112px";
+  fan.style.height = "112px";
+  fan.classList.add("dragging-live");
+  cpuFanOffsetX = fromShelf ? rect.width / 2 : clientX - rect.left;
+  cpuFanOffsetY = fromShelf ? rect.height / 2 : clientY - rect.top;
+  moveCpuFan(clientX, clientY);
+  window.addEventListener("pointermove", moveCpuFanLive);
+  window.addEventListener("pointerup", releaseCpuFan, {once:true});
+}
+
+function moveCpuFan(clientX, clientY){
+  const workspaceRect = workspace.getBoundingClientRect();
+  activeCpuFan.style.left = (clientX - workspaceRect.left - cpuFanOffsetX) + "px";
+  activeCpuFan.style.top = (clientY - workspaceRect.top - cpuFanOffsetY) + "px";
+}
+
+function moveCpuFanLive(event){
+  if(!activeCpuFan) return;
+  moveCpuFan(event.clientX, event.clientY);
+  activeCpuFan.classList.toggle("near-target", pointerInside(event.clientX, event.clientY, cpuFanTarget));
+}
+
+function releaseCpuFan(event){
+  if(!activeCpuFan) return;
+  const workspaceRect = workspace.getBoundingClientRect();
+  const targetRect = cpuFanTarget.getBoundingClientRect();
+  const overTarget = pointerInside(event.clientX, event.clientY, cpuFanTarget);
+  const overShelf = event.clientY >= workspaceRect.bottom;
+  activeCpuFan.classList.remove("dragging-live","near-target");
+  if(overShelf){
+    activeCpuFan.remove();
+    cpuFanElement = null;
+    cpuFanIcon.classList.remove("source-used");
+    refreshPartLocks();
+  refreshM2SlotOverlay();
+  }else if(overTarget){
+    activeCpuFan.innerHTML = cpuFanInstalledSVG;
+    activeCpuFan.style.width = "104px";
+    activeCpuFan.style.height = "104px";
+    activeCpuFan.style.left = (targetRect.left - workspaceRect.left - 3) + "px";
+    activeCpuFan.style.top = (targetRect.top - workspaceRect.top - 3) + "px";
+    activeCpuFan.classList.add("placed");
+    refreshPartLocks();
+  refreshM2SlotOverlay();
+  }
+  window.removeEventListener("pointermove", moveCpuFanLive);
+  activeCpuFan = null;
+}
+
+cpuFanIcon.addEventListener("pointerdown", event => {
+  createCpuFan(event.clientX, event.clientY);
+  event.preventDefault();
+});
+
+
+/* RAM install step. Unlocked after CPU fan is installed. */
+const ramSVG = `<svg viewBox="0 0 220 70" xmlns="http://www.w3.org/2000/svg" aria-label="RAM">
+  <defs>
+    <linearGradient id="ramShellV34" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#2f3032"/>
+      <stop offset=".55" stop-color="#171819"/>
+      <stop offset="1" stop-color="#060607"/>
+    </linearGradient>
+    <linearGradient id="ramHeatV34" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#d6d6d6"/>
+      <stop offset=".48" stop-color="#a9a9a9"/>
+      <stop offset="1" stop-color="#747474"/>
+    </linearGradient>
+    <filter id="ramShadowV34" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#000" flood-opacity=".5"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#ramShadowV34)">
+    <rect x="7" y="9" width="206" height="50" rx="6" fill="url(#ramShellV34)" stroke="#070707" stroke-width="5"/>
+    <rect x="16" y="18" width="188" height="31" rx="3" fill="url(#ramHeatV34)" stroke="#2d2d2d" stroke-width="2"/>
+    <rect x="83" y="31" width="54" height="7" rx="2" fill="#8c8c8c" opacity=".45"/>
+    <rect x="7" y="9" width="206" height="8" rx="4" fill="#0b0b0c" opacity=".78"/>
+    <path d="M101 9c2 7 15 7 18 0" fill="#070707"/>
+    <rect x="2" y="24" width="8" height="22" rx="2" fill="#1a1b1c" stroke="#080808" stroke-width="2"/>
+    <rect x="210" y="24" width="8" height="22" rx="2" fill="#1a1b1c" stroke="#080808" stroke-width="2"/>
+    <g fill="#d4a328">
+      <rect x="21" y="57" width="23" height="8"/>
+      <rect x="52" y="57" width="23" height="8"/>
+      <rect x="83" y="57" width="23" height="8"/>
+      <rect x="114" y="57" width="23" height="8"/>
+      <rect x="145" y="57" width="23" height="8"/>
+      <rect x="176" y="57" width="23" height="8"/>
+    </g>
+  </g>
+</svg>`;
+
+const ramInstalledSVG = `<svg viewBox="0 0 24 160" xmlns="http://www.w3.org/2000/svg" aria-label="Installed RGB RAM">
+  <defs>
+    <linearGradient id="ramRgbV33" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#ff5ca8"/>
+      <stop offset="22%" stop-color="#a65dff"/>
+      <stop offset="45%" stop-color="#35d9ff"/>
+      <stop offset="68%" stop-color="#4dff88"/>
+      <stop offset="100%" stop-color="#ffc72c"/>
+    </linearGradient>
+    <filter id="ramGlowV33" x="-120%" y="-20%" width="340%" height="140%">
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#41e5ff" flood-opacity=".75"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#ffc72c" flood-opacity=".35"/>
+    </filter>
+  </defs>
+  <rect x="5" y="0" width="14" height="160" rx="5" fill="#151515" stroke="#c9c9c9" stroke-width="2"/>
+  <rect x="8" y="7" width="8" height="146" rx="4" fill="url(#ramRgbV33)" filter="url(#ramGlowV33)"/>
+  <rect x="8" y="7" width="8" height="146" rx="4" fill="rgba(255,255,255,.2)"/>
+  <rect x="2" y="10" width="4" height="14" fill="#d8d8d8"/>
+  <rect x="18" y="10" width="4" height="14" fill="#d8d8d8"/>
+  <rect x="2" y="136" width="4" height="14" fill="#d8d8d8"/>
+  <rect x="18" y="136" width="4" height="14" fill="#d8d8d8"/>
+</svg>`;
+
+const ramIcon = document.getElementById("ram");
+const ramTarget = document.getElementById("ramTarget");
+let ramElement = null;
+let activeRam = null;
+let ramOffsetX = 0;
+let ramOffsetY = 0;
+
+function unlockRamIfReady(){
+  refreshPartLocks();
+  refreshM2SlotOverlay();
+}
+
+function createRam(clientX, clientY){
+  if(!isGlassRemoved() || !isMotherboardInstalled()) return;
+
+  if(ramElement){
+    beginRamDrag(ramElement, clientX, clientY, true);
+    return;
+  }
+
+  const workspaceRect = workspace.getBoundingClientRect();
+  const ram = document.createElement("div");
+  ram.className = "workspace-ram";
+  ram.id = "workspaceRam";
+  ram.innerHTML = ramSVG;
+  ram.style.left = (clientX - workspaceRect.left - 84) + "px";
+  ram.style.top = (clientY - workspaceRect.top - 28) + "px";
+
+  workspace.appendChild(ram);
+  ramElement = ram;
+  ramIcon.classList.add("source-used");
+
+  ram.addEventListener("pointerdown", event => {
+    beginRamDrag(ram, event.clientX, event.clientY, false);
+    event.preventDefault();
+  });
+
+  beginRamDrag(ram, clientX, clientY, true);
+}
+
+function beginRamDrag(ram, clientX, clientY, fromShelf){
+  const rect = ram.getBoundingClientRect();
+  activeRam = ram;
+  ram.classList.remove("placed");
+  if(ram.innerHTML !== ramSVG) ram.innerHTML = ramSVG;
+  ram.style.width = "168px";
+  ram.style.height = "56px";
+  ram.classList.add("dragging-live");
+
+  ramOffsetX = fromShelf ? rect.width / 2 : clientX - rect.left;
+  ramOffsetY = fromShelf ? rect.height / 2 : clientY - rect.top;
+
+  moveRam(clientX, clientY);
+  window.addEventListener("pointermove", moveRamLive);
+  window.addEventListener("pointerup", releaseRam, {once:true});
+}
+
+function moveRam(clientX, clientY){
+  const workspaceRect = workspace.getBoundingClientRect();
+  activeRam.style.left = (clientX - workspaceRect.left - ramOffsetX) + "px";
+  activeRam.style.top = (clientY - workspaceRect.top - ramOffsetY) + "px";
+}
+
+function moveRamLive(event){
+  if(!activeRam) return;
+  moveRam(event.clientX, event.clientY);
+  activeRam.classList.toggle("near-target", pointerInside(event.clientX, event.clientY, ramTarget));
+}
+
+function releaseRam(event){
+  if(!activeRam) return;
+
+  const workspaceRect = workspace.getBoundingClientRect();
+  const targetRect = ramTarget.getBoundingClientRect();
+  const overTarget = pointerInside(event.clientX, event.clientY, ramTarget);
+  const overShelf = event.clientY >= workspaceRect.bottom;
+
+  activeRam.classList.remove("dragging-live","near-target");
+
+  if(overShelf){
+    activeRam.remove();
+    ramElement = null;
+    ramIcon.classList.remove("source-used");
+    refreshPartLocks();
+  refreshM2SlotOverlay();
+  }else if(overTarget){
+    activeRam.innerHTML = ramInstalledSVG;
+    activeRam.style.width = "18px";
+    activeRam.style.height = "132px";
+    activeRam.style.left = (targetRect.left - workspaceRect.left) + "px";
+    activeRam.style.top = (targetRect.top - workspaceRect.top) + "px";
+    activeRam.classList.add("placed");
+    refreshPartLocks();
+  refreshM2SlotOverlay();
+  }
+
+  window.removeEventListener("pointermove", moveRamLive);
+  activeRam = null;
+}
+
+ramIcon.addEventListener("pointerdown", event => {
+  createRam(event.clientX, event.clientY);
+  event.preventDefault();
+});
+
+refreshPartLocks();
+  refreshM2SlotOverlay();
+
+</script>
+<script>
+/* Remove runtime highlight */
+document.addEventListener('dragenter',e=>{
+  const z=e.target.closest?.('.drop-zone,.dropzone,.drop-target,.drop-area');
+  if(z){
+    z.style.background='transparent';
+    z.style.border='none';
+    z.style.outline='none';
+    z.style.boxShadow='none';
+  }
+},true);
+
+document.addEventListener('dragover',e=>{
+  const z=e.target.closest?.('.drop-zone,.dropzone,.drop-target,.drop-area');
+  if(z){
+    z.style.background='transparent';
+    z.style.boxShadow='none';
+  }
+},true);
 </script>
 </body>
 </html>
