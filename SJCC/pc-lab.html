@@ -1028,61 +1028,300 @@ body{
   height:136px !important;
 }
 .nvme-target{
-  left:504px !important;
-  top:285px !important;
+  left:500px !important;
+  top:291px !important;
   width:96px !important;
   height:26px !important;
 }
 </style>
 
 
-<style id="visible-m2-slot-overlay-v42">
+<style id="m2-slot-visibility-fix-v42">
 .m2-slot-overlay{
   position:absolute;
-  left:505px;
-  top:286px;
-  width:94px;
-  height:12px;
+  left:501px;
+  top:283px;
+  width:102px;
+  height:16px;
   z-index:25;
   pointer-events:none;
   display:none;
-  border-radius:3px;
-  background:#f4f4f4;
-  border:2px solid #111;
-  box-shadow:0 2px 3px rgba(0,0,0,.45);
-}
-.m2-slot-overlay::before{
-  content:"";
-  position:absolute;
-  left:8px;
-  top:3px;
-  width:60px;
-  height:3px;
-  border-radius:2px;
-  background:#9a9a9a;
-}
-.m2-slot-overlay::after{
-  content:"";
-  position:absolute;
-  right:-10px;
-  top:-4px;
-  width:12px;
-  height:18px;
-  border-radius:2px;
-  background:#e6e6e6;
-  border:2px solid #111;
 }
 .m2-slot-overlay.show{
   display:block;
 }
-.workspace-nvme.placed ~ .m2-slot-overlay{
-  display:none !important;
+.m2-slot-overlay .m2-body{
+  position:absolute;
+  left:8px;
+  top:4px;
+  width:78px;
+  height:9px;
+  border-radius:3px;
+  background:#f2f2f2;
+  border:2px solid #111;
+  box-shadow:0 2px 3px rgba(0,0,0,.45);
+}
+.m2-slot-overlay .m2-line{
+  position:absolute;
+  left:18px;
+  top:8px;
+  width:50px;
+  height:3px;
+  border-radius:2px;
+  background:#9a9a9a;
+}
+.m2-slot-overlay .m2-end{
+  position:absolute;
+  right:3px;
+  top:1px;
+  width:15px;
+  height:15px;
+  border-radius:2px;
+  background:#e9e9e9;
+  border:2px solid #111;
+  box-shadow:0 2px 3px rgba(0,0,0,.45);
+}
+.workspace-nvme.placed{
+  z-index:34 !important;
 }
 .glass-panel.on-case{
   z-index:50 !important;
 }
 </style>
 
+
+<style id="m2-slot-small-detail-v43">
+.m2-slot-overlay{
+  position:absolute !important;
+  left:452px !important;
+  top:329px !important;
+  width:12px !important;
+  height:20px !important;
+  z-index:35 !important;
+  pointer-events:none !important;
+  display:none;
+}
+.m2-slot-overlay.show{
+  display:block !important;
+}
+.m2-slot-overlay .m2-body{
+  position:absolute;
+  left:2px;
+  top:2px;
+  width:8px;
+  height:16px;
+  border-radius:2px;
+  background:linear-gradient(90deg,#f2f2f2,#b9b9b9 55%,#6e6e6e);
+  border:2px solid #111;
+  box-shadow:0 2px 3px rgba(0,0,0,.45);
+}
+.m2-slot-overlay .m2-line{
+  position:absolute;
+  left:4px;
+  top:5px;
+  width:4px;
+  height:10px;
+  border-radius:2px;
+  background:#8f8f8f;
+}
+.m2-slot-overlay .m2-end{
+  display:none !important;
+}
+.workspace-nvme.placed{
+  z-index:36 !important;
+}
+.glass-panel.on-case{
+  z-index:50 !important;
+}
+</style>
+
+
+
+<style id="nvme-drag-final-fix-v44">
+.nvme-target{
+  left:501px !important;
+  top:286px !important;
+  width:102px !important;
+  height:28px !important;
+  z-index:88 !important;
+  pointer-events:none !important;
+}
+.workspace-nvme{
+  width:120px !important;
+  height:42px !important;
+  z-index:34 !important;
+  cursor:grab !important;
+  touch-action:none !important;
+  user-select:none !important;
+}
+.workspace-nvme.dragging-live{
+  z-index:9999 !important;
+  cursor:grabbing !important;
+  opacity:.96 !important;
+}
+.workspace-nvme.placed{
+  width:102px !important;
+  height:28px !important;
+  z-index:36 !important;
+  filter:drop-shadow(0 4px 4px rgba(0,0,0,.42)) !important;
+}
+.workspace-nvme svg{
+  width:100% !important;
+  height:100% !important;
+  display:block !important;
+  pointer-events:none !important;
+}
+.workspace-nvme.near-target{
+  filter:drop-shadow(0 0 14px rgba(255,199,44,.45)) !important;
+}
+.part#nvme.source-used{
+  opacity:.35 !important;
+}
+.glass-panel.on-case{
+  z-index:50 !important;
+}
+</style>
+
+
+
+<style id="nvme-red-position-update-v45">
+/* NVMe target moved to the red-highlighted area above the lower M.2 visual. */
+.nvme-target{
+  left:486px !important;
+  top:235px !important;
+  width:98px !important;
+  height:30px !important;
+  z-index:88 !important;
+  pointer-events:none !important;
+}
+.workspace-nvme.placed{
+  width:98px !important;
+  height:30px !important;
+  z-index:36 !important;
+  filter:drop-shadow(0 4px 4px rgba(0,0,0,.42)) !important;
+}
+/* Keep the small visible M.2 slot detail aligned with the new target. */
+.m2-slot-overlay{
+  left:486px !important;
+  top:235px !important;
+  width:98px !important;
+  height:30px !important;
+  z-index:35 !important;
+}
+.m2-slot-overlay .m2-body{
+  left:0 !important;
+  top:8px !important;
+  width:92px !important;
+  height:14px !important;
+  border-radius:3px !important;
+}
+.m2-slot-overlay .m2-line{
+  left:10px !important;
+  top:13px !important;
+  width:60px !important;
+  height:4px !important;
+}
+</style>
+
+
+<style id="m2-realistic-slot-update-v46">
+/* Realistic empty M.2 slot matching the reference: low black socket, screw holes, locator dots, and right-side connector. */
+.m2-slot-overlay{
+  left:486px !important;
+  top:235px !important;
+  width:98px !important;
+  height:30px !important;
+  z-index:35 !important;
+  pointer-events:none !important;
+}
+.m2-slot-overlay.show{
+  display:block !important;
+}
+.m2-slot-overlay .m2-body{
+  position:absolute !important;
+  left:0 !important;
+  top:0 !important;
+  width:98px !important;
+  height:30px !important;
+  border-radius:3px !important;
+  background:
+    radial-gradient(circle at 14px 15px,#c9c9c9 0 2px,#1a1b1b 2.5px 4px,transparent 4.5px),
+    radial-gradient(circle at 42px 15px,#c9c9c9 0 2px,#1a1b1b 2.5px 4px,transparent 4.5px),
+    radial-gradient(circle at 70px 15px,#c9c9c9 0 2px,#1a1b1b 2.5px 4px,transparent 4.5px),
+    linear-gradient(180deg,#323332 0%,#202120 55%,#171817 100%) !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08), inset 0 -1px 0 rgba(0,0,0,.7), 0 2px 4px rgba(0,0,0,.42) !important;
+}
+.m2-slot-overlay .m2-line{
+  position:absolute !important;
+  left:62px !important;
+  top:5px !important;
+  width:24px !important;
+  height:3px !important;
+  border-radius:0 !important;
+  background:repeating-linear-gradient(90deg,#d7d7d7 0 2px,transparent 2px 6px) !important;
+  box-shadow:none !important;
+}
+.m2-slot-overlay .m2-end{
+  display:block !important;
+  position:absolute !important;
+  right:0 !important;
+  top:3px !important;
+  width:9px !important;
+  height:24px !important;
+  border-radius:1px !important;
+  background:
+    repeating-linear-gradient(0deg,#ececec 0 2px,#767676 2px 3px),
+    linear-gradient(90deg,#e9e9e9,#9b9b9b) !important;
+  border:1px solid #101010 !important;
+  box-shadow:inset 1px 0 0 rgba(255,255,255,.55), 0 1px 2px rgba(0,0,0,.55) !important;
+}
+.m2-slot-overlay::before{
+  content:"";
+  position:absolute;
+  left:8px;
+  top:8px;
+  width:2px;
+  height:2px;
+  border-radius:50%;
+  background:#bfc0c0;
+  box-shadow:28px 0 0 #bfc0c0, 56px 0 0 #bfc0c0;
+  z-index:2;
+}
+.m2-slot-overlay::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:9px;
+  bottom:0;
+  height:1px;
+  background:rgba(255,199,44,.45);
+  opacity:.35;
+}
+</style>
+
+
+<style id="integrated-m2-slot-final-v47">
+/* The M.2 slot is now drawn directly inside the motherboard SVG, not as a separate overlay layer. */
+#m2SlotOverlay,
+.m2-slot-overlay{
+  display:none !important;
+}
+.nvme-target{
+  left:486px !important;
+  top:235px !important;
+  width:98px !important;
+  height:30px !important;
+  z-index:88 !important;
+  pointer-events:none !important;
+}
+.workspace-nvme.placed{
+  width:98px !important;
+  height:30px !important;
+  z-index:36 !important;
+  filter:drop-shadow(0 4px 4px rgba(0,0,0,.42)) !important;
+}
+</style>
 </head>
 <body>
 <div class="lab">
@@ -1120,7 +1359,6 @@ body{
     <div class="cpu-fan-target" id="cpuFanTarget" aria-label="CPU fan target"></div>
     <div class="ram-target" id="ramTarget" aria-label="RAM DIMM slot target"></div>
     <div class="nvme-target" id="nvmeTarget" aria-label="NVMe M.2 slot target"></div>
-    <div class="m2-slot-overlay" id="m2SlotOverlay" aria-hidden="true"></div>
     <div class="shelf-return-zone" id="shelfReturnZone" aria-label="Return motherboard to shelf"></div>
   </main>
 
@@ -1286,7 +1524,7 @@ function closePanel(){
   glassPanel.classList.add("on-case","correct-flash");
   setTimeout(() => glassPanel.classList.remove("correct-flash"), 450);
   refreshPartLocks();
-  refreshM2SlotOverlay();
+  if(window.refreshM2SlotOverlay) window.refreshM2SlotOverlay();
 }
 
 function leavePanelWhereDropped(clientX, clientY){
@@ -1294,7 +1532,7 @@ function leavePanelWhereDropped(clientX, clientY){
   glassPanel.classList.remove("on-case","correct-flash","is-moving");
   glassPanel.classList.add("free-placed","removed");
   refreshPartLocks();
-  refreshM2SlotOverlay();
+  if(window.refreshM2SlotOverlay) window.refreshM2SlotOverlay();
 }
 
 glassPanel.addEventListener("pointerdown", panelPointerDown);
@@ -1418,14 +1656,36 @@ const motherboardSVG = `<svg viewBox="0 0 248 283" xmlns="http://www.w3.org/2000
   <g>
     <rect x="62" y="158" width="126" height="9" rx="2" fill="#111315" stroke="#eeeeee" stroke-width="2"/>
     <rect x="174" y="164" width="25" height="10" fill="#d7d7d7" stroke="#777" stroke-width="1"/>
-    <!-- Empty M.2 connector -->
-    <rect x="73" y="208" width="84" height="10" rx="2" fill="#ffffff" stroke="#8b8b8b" stroke-width="1.5"/>
-    <rect x="82" y="211" width="56" height="4" rx="1.5" fill="#d7d7d7"/>
-    <rect x="149" y="205" width="14" height="16" rx="1" fill="#ececec" stroke="#666666" stroke-width="1"/>
-    <circle cx="68" cy="213" r="3.5" fill="#f1f1f1" stroke="#666666" stroke-width="1"/>
+    <!-- Integrated realistic M.2 slot built into the motherboard SVG -->
+    <g id="integratedM2Slot" aria-label="M.2 slot">
+      <rect x="57" y="168" width="108" height="31" rx="3" fill="#151615" stroke="#242626" stroke-width="1.2"/>
+      <rect x="59" y="170" width="103" height="27" rx="2" fill="#1e201f" stroke="rgba(255,255,255,.10)" stroke-width=".8"/>
+      <path d="M61 196h92" stroke="#b88c20" stroke-width=".9" opacity=".55"/>
+      <g fill="#d7d7d7" stroke="#0c0d0d" stroke-width="1.2">
+        <circle cx="70" cy="184" r="3.2"/>
+        <circle cx="102" cy="184" r="3.2"/>
+        <circle cx="134" cy="184" r="3.2"/>
+      </g>
+      <g fill="#0c0d0d">
+        <circle cx="70" cy="184" r="1.2"/>
+        <circle cx="102" cy="184" r="1.2"/>
+        <circle cx="134" cy="184" r="1.2"/>
+      </g>
+      <g fill="#d6d6d6" opacity=".9">
+        <circle cx="65" cy="174" r="1"/>
+        <circle cx="75" cy="174" r="1"/>
+        <circle cx="86" cy="174" r="1"/>
+        <circle cx="97" cy="174" r="1"/>
+        <circle cx="108" cy="174" r="1"/>
+      </g>
+      <rect x="154" y="171" width="10" height="25" rx="1" fill="#dcdcdc" stroke="#0c0d0d" stroke-width="1"/>
+      <g stroke="#686868" stroke-width="1">
+        <path d="M156 173h6M156 176h6M156 179h6M156 182h6M156 185h6M156 188h6M156 191h6M156 194h6"/>
+      </g>
+      <rect x="153" y="171" width="2" height="25" fill="#fafafa" opacity=".85"/>
+    </g>
   </g>
-
-  <!-- lower board components -->
+<!-- lower board components -->
   <g>
     <circle cx="50" cy="206" r="13" fill="#c9c9c9" stroke="#55595b" stroke-width="1"/>
     <rect x="61" y="236" width="40" height="8" rx="1" fill="#111315" stroke="#b5b5b5" stroke-width="1"/>
@@ -1481,7 +1741,7 @@ let mbOffsetY = 0;
 
 function lockNonMotherboardParts(){
   refreshPartLocks();
-  refreshM2SlotOverlay();
+  if(window.refreshM2SlotOverlay) window.refreshM2SlotOverlay();
 }
 
 function createMotherboard(clientX, clientY){
@@ -1551,13 +1811,13 @@ function releaseMotherboard(event){
     motherboardElement = null;
     motherboardIcon.classList.remove("source-used");
     refreshPartLocks();
-  refreshM2SlotOverlay();
+  if(window.refreshM2SlotOverlay) window.refreshM2SlotOverlay();
   }else if(overTarget){
     activeMotherboard.style.left = (targetRect.left - workspaceRect.left) + "px";
     activeMotherboard.style.top = (targetRect.top - workspaceRect.top) + "px";
     activeMotherboard.classList.add("placed");
     refreshPartLocks();
-  refreshM2SlotOverlay();
+  if(window.refreshM2SlotOverlay) window.refreshM2SlotOverlay();
   }
 
   window.removeEventListener("pointermove", moveMotherboardLive);
@@ -1614,7 +1874,7 @@ let cpuOffsetY = 0;
 
 function unlockCpuIfReady(){
   refreshPartLocks();
-  refreshM2SlotOverlay();
+  if(window.refreshM2SlotOverlay) window.refreshM2SlotOverlay();
 }
 
 function createCpu(clientX, clientY){
@@ -1689,7 +1949,7 @@ function releaseCpu(event){
     cpuElement = null;
     cpuIcon.classList.remove("source-used");
     refreshPartLocks();
-  refreshM2SlotOverlay();
+  if(window.refreshM2SlotOverlay) window.refreshM2SlotOverlay();
   }else if(overTarget){
     activeCpu.innerHTML = cpuInstalledSVG;
     activeCpu.style.width = "48px";
@@ -1698,7 +1958,7 @@ function releaseCpu(event){
     activeCpu.style.top = (targetRect.top - workspaceRect.top) + "px";
     activeCpu.classList.add("placed");
     refreshPartLocks();
-  refreshM2SlotOverlay();
+  if(window.refreshM2SlotOverlay) window.refreshM2SlotOverlay();
   }
 
   window.removeEventListener("pointermove", moveCpuLive);
@@ -1789,15 +2049,6 @@ function isCpuInstalled(){
   return cpuElement && cpuElement.classList.contains("placed");
 }
 
-
-/* Keep the visible M.2 slot on top of the motherboard until NVMe is installed. */
-const m2SlotOverlay = document.getElementById("m2SlotOverlay");
-function refreshM2SlotOverlay(){
-  if(!m2SlotOverlay) return;
-  const shouldShow = isMotherboardInstalled() && !(nvmeElement && nvmeElement.classList.contains("placed"));
-  m2SlotOverlay.classList.toggle("show", shouldShow);
-}
-
 function refreshPartLocks(){
   document.querySelectorAll(".part").forEach(part => {
     part.classList.add("locked-for-step");
@@ -1828,7 +2079,7 @@ function refreshPartLocks(){
 
 function unlockCpuFanIfReady(){
   refreshPartLocks();
-  refreshM2SlotOverlay();
+  if(window.refreshM2SlotOverlay) window.refreshM2SlotOverlay();
 }
 
 function createCpuFan(clientX, clientY){
@@ -1893,7 +2144,7 @@ function releaseCpuFan(event){
     cpuFanElement = null;
     cpuFanIcon.classList.remove("source-used");
     refreshPartLocks();
-  refreshM2SlotOverlay();
+  if(window.refreshM2SlotOverlay) window.refreshM2SlotOverlay();
   }else if(overTarget){
     activeCpuFan.innerHTML = cpuFanInstalledSVG;
     activeCpuFan.style.width = "104px";
@@ -1902,7 +2153,7 @@ function releaseCpuFan(event){
     activeCpuFan.style.top = (targetRect.top - workspaceRect.top - 3) + "px";
     activeCpuFan.classList.add("placed");
     refreshPartLocks();
-  refreshM2SlotOverlay();
+  if(window.refreshM2SlotOverlay) window.refreshM2SlotOverlay();
   }
   window.removeEventListener("pointermove", moveCpuFanLive);
   activeCpuFan = null;
@@ -1983,7 +2234,7 @@ let ramOffsetY = 0;
 
 function unlockRamIfReady(){
   refreshPartLocks();
-  refreshM2SlotOverlay();
+  if(window.refreshM2SlotOverlay) window.refreshM2SlotOverlay();
 }
 
 function createRam(clientX, clientY){
@@ -2058,7 +2309,7 @@ function releaseRam(event){
     ramElement = null;
     ramIcon.classList.remove("source-used");
     refreshPartLocks();
-  refreshM2SlotOverlay();
+  if(window.refreshM2SlotOverlay) window.refreshM2SlotOverlay();
   }else if(overTarget){
     activeRam.innerHTML = ramInstalledSVG;
     activeRam.style.width = "18px";
@@ -2067,7 +2318,7 @@ function releaseRam(event){
     activeRam.style.top = (targetRect.top - workspaceRect.top) + "px";
     activeRam.classList.add("placed");
     refreshPartLocks();
-  refreshM2SlotOverlay();
+  if(window.refreshM2SlotOverlay) window.refreshM2SlotOverlay();
   }
 
   window.removeEventListener("pointermove", moveRamLive);
@@ -2079,8 +2330,160 @@ ramIcon.addEventListener("pointerdown", event => {
   event.preventDefault();
 });
 
+
+/* NVMe M.2 install step. Unlocked after motherboard is installed. */
+const nvmeSVG = `<svg viewBox="0 0 180 54" xmlns="http://www.w3.org/2000/svg" aria-label="NVMe M.2 SSD">
+  <defs>
+    <linearGradient id="nvmeBoardV44" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#0f8f86"/>
+      <stop offset=".55" stop-color="#08766f"/>
+      <stop offset="1" stop-color="#054d49"/>
+    </linearGradient>
+    <linearGradient id="nvmeGoldV44" x1="0" x2="1">
+      <stop stop-color="#f2c24b"/>
+      <stop offset="1" stop-color="#a87812"/>
+    </linearGradient>
+    <filter id="nvmeShadowV44" x="-20%" y="-40%" width="140%" height="180%">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000" flood-opacity=".45"/>
+    </filter>
+  </defs>
+  <g filter="url(#nvmeShadowV44)">
+    <rect x="5" y="8" width="160" height="38" rx="4" fill="url(#nvmeBoardV44)" stroke="#071111" stroke-width="4"/>
+    <path d="M6 17h-6v20h6" fill="none" stroke="#071111" stroke-width="4" stroke-linejoin="round"/>
+    <rect x="24" y="15" width="70" height="24" rx="2" fill="#171819" stroke="#000" stroke-width="2"/>
+    <rect x="99" y="15" width="31" height="24" rx="2" fill="#202426" stroke="#050505" stroke-width="2"/>
+    <rect x="139" y="15" width="15" height="17" rx="1" fill="#b8d6d5"/>
+    <rect x="156" y="11" width="9" height="32" fill="url(#nvmeGoldV44)"/>
+    <path d="M159 13v28M163 13v28" stroke="#5b3b08" stroke-width="1" opacity=".75"/>
+    <circle cx="154" cy="27" r="3" fill="#f1f1f1" stroke="#575757" stroke-width="1"/>
+    <path d="M20 45h132" stroke="#d7a328" stroke-width="4" stroke-linecap="round"/>
+  </g>
+</svg>`;
+
+const nvmeInstalledSVG = `<svg viewBox="0 0 180 54" xmlns="http://www.w3.org/2000/svg" aria-label="Installed NVMe M.2 SSD">
+  <defs>
+    <linearGradient id="nvmeInstalledBoardV44" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#12a097"/>
+      <stop offset=".55" stop-color="#08766f"/>
+      <stop offset="1" stop-color="#053f3b"/>
+    </linearGradient>
+    <filter id="nvmeInstalledShadowV44" x="-20%" y="-40%" width="140%" height="180%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#000" flood-opacity=".5"/>
+    </filter>
+  </defs>
+  <g filter="url(#nvmeInstalledShadowV44)">
+    <rect x="5" y="9" width="160" height="36" rx="4" fill="url(#nvmeInstalledBoardV44)" stroke="#061010" stroke-width="4"/>
+    <path d="M6 18h-6v18h6" fill="none" stroke="#061010" stroke-width="4" stroke-linejoin="round"/>
+    <rect x="26" y="15" width="68" height="24" rx="2" fill="#171819" stroke="#000" stroke-width="2"/>
+    <rect x="101" y="15" width="29" height="24" rx="2" fill="#202426" stroke="#050505" stroke-width="2"/>
+    <rect x="139" y="16" width="18" height="16" rx="1" fill="#b8d6d5"/>
+    <rect x="158" y="12" width="7" height="30" fill="#0b1918" opacity=".7"/>
+    <circle cx="154" cy="27" r="3" fill="#f1f1f1" stroke="#575757" stroke-width="1"/>
+  </g>
+</svg>`;
+
+const nvmeIcon = document.getElementById("nvme");
+const nvmeTarget = document.getElementById("nvmeTarget");
+let nvmeElement = null;
+let activeNvme = null;
+let nvmeOffsetX = 0;
+let nvmeOffsetY = 0;
+
+function createNvme(clientX, clientY){
+  if(!isGlassRemoved() || !isMotherboardInstalled()) return;
+
+  if(nvmeElement){
+    beginNvmeDrag(nvmeElement, clientX, clientY, true);
+    return;
+  }
+
+  const workspaceRect = workspace.getBoundingClientRect();
+  const nvme = document.createElement("div");
+  nvme.className = "workspace-nvme";
+  nvme.id = "workspaceNvme";
+  nvme.innerHTML = nvmeSVG;
+  nvme.style.left = (clientX - workspaceRect.left - 60) + "px";
+  nvme.style.top = (clientY - workspaceRect.top - 21) + "px";
+
+  workspace.appendChild(nvme);
+  nvmeElement = nvme;
+  nvmeIcon.classList.add("source-used");
+
+  nvme.addEventListener("pointerdown", event => {
+    beginNvmeDrag(nvme, event.clientX, event.clientY, false);
+    event.preventDefault();
+  });
+
+  beginNvmeDrag(nvme, clientX, clientY, true);
+}
+
+function beginNvmeDrag(nvme, clientX, clientY, fromShelf){
+  const rect = nvme.getBoundingClientRect();
+  activeNvme = nvme;
+  nvme.classList.remove("placed");
+  if(nvme.innerHTML !== nvmeSVG) nvme.innerHTML = nvmeSVG;
+  nvme.style.width = "120px";
+  nvme.style.height = "42px";
+  nvme.classList.add("dragging-live");
+
+  nvmeOffsetX = fromShelf ? rect.width / 2 : clientX - rect.left;
+  nvmeOffsetY = fromShelf ? rect.height / 2 : clientY - rect.top;
+
+  moveNvme(clientX, clientY);
+  window.addEventListener("pointermove", moveNvmeLive);
+  window.addEventListener("pointerup", releaseNvme, {once:true});
+}
+
+function moveNvme(clientX, clientY){
+  const workspaceRect = workspace.getBoundingClientRect();
+  activeNvme.style.left = (clientX - workspaceRect.left - nvmeOffsetX) + "px";
+  activeNvme.style.top = (clientY - workspaceRect.top - nvmeOffsetY) + "px";
+}
+
+function moveNvmeLive(event){
+  if(!activeNvme) return;
+  moveNvme(event.clientX, event.clientY);
+  activeNvme.classList.toggle("near-target", pointerInside(event.clientX, event.clientY, nvmeTarget));
+}
+
+function releaseNvme(event){
+  if(!activeNvme) return;
+
+  const workspaceRect = workspace.getBoundingClientRect();
+  const targetRect = nvmeTarget.getBoundingClientRect();
+  const overTarget = pointerInside(event.clientX, event.clientY, nvmeTarget);
+  const overShelf = event.clientY >= workspaceRect.bottom;
+
+  activeNvme.classList.remove("dragging-live","near-target");
+
+  if(overShelf){
+    activeNvme.remove();
+    nvmeElement = null;
+    nvmeIcon.classList.remove("source-used");
+    refreshPartLocks();
+    if(window.refreshM2SlotOverlay) window.refreshM2SlotOverlay();
+  }else if(overTarget){
+    activeNvme.innerHTML = nvmeInstalledSVG;
+    activeNvme.style.width = "98px";
+    activeNvme.style.height = "30px";
+    activeNvme.style.left = (targetRect.left - workspaceRect.left) + "px";
+    activeNvme.style.top = (targetRect.top - workspaceRect.top) + "px";
+    activeNvme.classList.add("placed");
+    refreshPartLocks();
+    if(window.refreshM2SlotOverlay) window.refreshM2SlotOverlay();
+  }
+
+  window.removeEventListener("pointermove", moveNvmeLive);
+  activeNvme = null;
+}
+
+nvmeIcon.addEventListener("pointerdown", event => {
+  createNvme(event.clientX, event.clientY);
+  event.preventDefault();
+});
+
 refreshPartLocks();
-  refreshM2SlotOverlay();
+  if(window.refreshM2SlotOverlay) window.refreshM2SlotOverlay();
 
 </script>
 <script>
@@ -2103,5 +2506,32 @@ document.addEventListener('dragover',e=>{
   }
 },true);
 </script>
+
+<script id="m2-slot-visibility-script-v42">
+(function(){
+  function getM2Overlay(){
+    return document.getElementById("m2SlotOverlay");
+  }
+  function boardInstalled(){
+    const board = document.querySelector(".workspace-motherboard.placed");
+    return !!board;
+  }
+  function nvmeInstalled(){
+    const drive = document.querySelector(".workspace-nvme.placed");
+    return !!drive;
+  }
+  window.refreshM2SlotOverlay = function(){
+    const overlay = getM2Overlay();
+    if(!overlay) return;
+    overlay.classList.toggle("show", boardInstalled() && !nvmeInstalled());
+  };
+  document.addEventListener("pointerup", function(){
+    setTimeout(window.refreshM2SlotOverlay, 0);
+  });
+  document.addEventListener("DOMContentLoaded", window.refreshM2SlotOverlay);
+  setTimeout(window.refreshM2SlotOverlay, 0);
+})();
+</script>
+
 </body>
 </html>
